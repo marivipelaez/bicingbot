@@ -22,7 +22,7 @@ import logging.config
 import os
 
 import telegram
-from flask import Flask, request, url_for
+from flask import Flask, request
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -31,7 +31,9 @@ app = Flask(__name__)
 app_path = os.path.dirname(os.path.realpath(__file__))
 output_log_filename = os.path.join(app_path, 'bicingbot.log').replace('\\', '\\\\')
 logging.config.fileConfig(os.path.join(app_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
+global logger
 logger = logging.getLogger(__name__)
+logger.info('Starting BicingBot server')
 
 # Get Telegram token from file
 with open(os.path.join(app_path, 'token'), 'rb') as f:
@@ -57,7 +59,7 @@ def bicingbot_help():
     return 'Welcome to BicingBot!'
 
 
-@app.route('/webhook', methods=['GET', 'POST'])
+@app.route('/bicingbot', methods=['GET', 'POST'])
 def webhook_handler():
     """
     Handles requests from BicingBot users.
@@ -91,6 +93,6 @@ def set_webhook():
     :return: HTTP_RESPONSE with 200 OK status and a status message.
     """
 
-    bot_response = bot.setWebhook(url_for('webhook_handler'))
+    bot_response = bot.setWebhook('{}/bicingbot'.format(request.url_root))
     logger.debug(bot_response)
     return 'Webhook configured'
