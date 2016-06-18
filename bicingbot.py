@@ -18,21 +18,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import logging.config
+import os
+
 import telegram
-import logging
 from flask import Flask, request, url_for
 
+# Initialize Flask app
 app = Flask(__name__)
 
-with open('token', 'rb') as f:
-    token = f.readline()
+# Initialize logger
+app_path = os.path.dirname(os.path.realpath(__file__))
+output_log_filename = os.path.join(app_path, 'bicingbot.log').replace('\\', '\\\\')
+logging.config.fileConfig(os.path.join(app_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
+logger = logging.getLogger(__name__)
 
+# Get Telegram token from file
+with open(os.path.join(app_path, 'token'), 'rb') as f:
+    token = f.readline().decode(encoding='UTF-8').rstrip('\n')
+
+# Get bot instance
 global bot
 bot = telegram.Bot(token=token)
+
+# Bicing configuration
 STATIONS = {'casa': [153, 191, 339, 165, 26], 'trabajo': []}
 BICING_URL = 'http://wservice.viabicing.cat/v2/stations/'
-WEBHOOK_URL = 'https//vpelalo.pythonanywhere.com/webhook'
-logger = logging.basicConfig(filename='bicingbot.log')
 
 
 @app.route('/')
