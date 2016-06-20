@@ -24,6 +24,8 @@ import os
 import telegram
 from flask import Flask, request
 
+from bicing import Bicing, StationNotFoundError
+
 # Initialize Flask app
 app = Flask(__name__)
 
@@ -71,16 +73,14 @@ def webhook_handler():
     chat_id = update.message.chat.id
     text = update.message.text
     stations = STATIONS[text]
-    bicing_json = {'stations': [
-        {'id': '157', 'type': 'BIKE', 'latitude': '41.411636', 'longitude': '2.216337', 'streetName': 'C\/Llull',
-         'streetNumber': '396', 'altitude': '5', 'slots': '16', 'bikes': '10', 'nearbyStations': '147, 158, 159, 160',
-         'status': 'OPN'}], 'updateTime': 1466104988}
-    for s in stations:
-        # bicing_response = requests.get('{}{}'.format(BICING_URL, s))
-        # print(bicing_response.text)
-        # bicing_json = bicing_response.json()
-        # resp = '{}: {} slots'.format(s, bicing_json.slots)
-        resp = '{}: {} slots'.format(s, bicing_json['stations'][0]['slots'])
+    for station_id in stations:
+        try:
+            station = Bicing().get_station(station_id)
+            resp = '{}: {} slots'.format(station_id, station.slots)
+        except StationNotFoundError:
+            resp = '{}: station not found'.format(station_id)
+        except Exception:
+            resp = '{}: oops, something went wrong'.format(station_id)
         bot.sendMessage(chat_id=chat_id, text=resp)
     logger.debug('chat_id={}, text={}'.format(chat_id, text))
     return 'Handling your webhook'
