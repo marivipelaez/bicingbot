@@ -45,9 +45,8 @@ with open(os.path.join(app_path, 'token'), 'rb') as f:
 global bot
 bot = telegram.Bot(token=token)
 
-# Bicing configuration
-STATIONS = {'casa': [153, 191, 339, 165, 26], 'trabajo': []}
-BICING_URL = 'http://wservice.viabicing.cat/v2/stations/'
+# Temporal hardcoded station groups
+STATIONS = {'casa': [153, 154, 339, 165, 166], 'trabajo': [168, 160, 158, 159, 157]}
 
 
 @app.route('/')
@@ -72,17 +71,29 @@ def webhook_handler():
     update = telegram.Update.de_json(request.get_json(force=True))
     chat_id = update.message.chat.id
     text = update.message.text
-    stations = STATIONS[text]
+
+    try:
+        stations = STATIONS[text.lower()]
+        logger.info('Get group: chat_id={}, text={}'.format(chat_id, text))
+    except KeyError:
+        try:
+            stations = [int(text)]
+            logger.info('Get station: chat_id={}, text={}'.format(chat_id, text))
+        except Exception:
+            stations = []
+            logger.info('Unknown command: chat_id={}, text={}'.format(chat_id, text))
+            bot.sendMessage(chat_id=chat_id, text='What? Please, send me a station id')
+
     for station_id in stations:
         try:
             station = Bicing().get_station(station_id)
-            resp = '{}: {} slots'.format(station_id, station.slots)
+            resp = '{} bikes, {} slots [{}] {} {}'.format(station['bikes'], station['slots'], station_id,
+                                                          station['streetName'], station['streetNumber'])
         except StationNotFoundError:
             resp = '{}: station not found'.format(station_id)
         except Exception:
             resp = '{}: oops, something went wrong'.format(station_id)
         bot.sendMessage(chat_id=chat_id, text=resp)
-    logger.debug('chat_id={}, text={}'.format(chat_id, text))
     return 'Handling your webhook'
 
 
