@@ -84,17 +84,34 @@ def webhook_handler():
             logger.info('Unknown command: chat_id={}, text={}'.format(chat_id, text))
             bot.sendMessage(chat_id=chat_id, text='What? Please, send me a station id')
 
+    stations_status = []
     for station_id in stations:
         try:
-            station = Bicing().get_station(station_id)
-            resp = '{} bikes, {} slots [{}] {} {}'.format(station['bikes'], station['slots'], station_id,
-                                                          station['streetName'], station['streetNumber'])
+            stations_status.append(Bicing().get_station(station_id))
         except StationNotFoundError:
-            resp = '{}: station not found'.format(station_id)
+            stations_status.append({'error': '{}: station not found'.format(station_id)})
         except Exception:
-            resp = '{}: oops, something went wrong'.format(station_id)
-        bot.sendMessage(chat_id=chat_id, text=resp)
+            stations_status.append({'error': '{}: oops, something went wrong'.format(station_id)})
+    if stations_status:
+        bot.sendMessage(chat_id=chat_id, text=prepare_stations_status_response(stations_status))
     return 'Handling your webhook'
+
+
+def prepare_stations_status_response(stations):
+    """
+    Beautify stations status output to be rendered in Telegram
+
+    :param stations: list of stations read from Bicing API
+    :return: a str with the complete message
+    """
+    messages = []
+    for station in stations:
+        if 'error' in station:
+            messages.append(station['error'])
+        else:
+            messages.append('{} bikes, {} slots [{}] {} {}'.format(station['bikes'], station['slots'], station['id'],
+                                                                   station['streetName'], station['streetNumber']))
+    return '\n'.join(messages)
 
 
 @app.route('/setwebhook')
