@@ -18,21 +18,35 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import telegram
-import logging
-from flask import Flask, request, url_for
+import logging.config
+import os
 
+import telegram
+from flask import Flask, request
+
+from bicing import Bicing, StationNotFoundError
+
+# Initialize Flask app
 app = Flask(__name__)
 
-with open('token', 'rb') as f:
-    token = f.readline()
+# Initialize logger
+app_path = os.path.dirname(os.path.realpath(__file__))
+output_log_filename = os.path.join(app_path, 'bicingbot.log').replace('\\', '\\\\')
+logging.config.fileConfig(os.path.join(app_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
+global logger
+logger = logging.getLogger(__name__)
+logger.info('Starting BicingBot server')
 
+# Get Telegram token from file
+with open(os.path.join(app_path, 'token'), 'rb') as f:
+    token = f.readline().decode(encoding='UTF-8').rstrip('\n')
+
+# Get bot instance
 global bot
 bot = telegram.Bot(token=token)
-STATIONS = {'casa': [153, 191, 339, 165, 26], 'trabajo': []}
-BICING_URL = 'http://wservice.viabicing.cat/v2/stations/'
-WEBHOOK_URL = 'https//vpelalo.pythonanywhere.com/webhook'
-logger = logging.basicConfig(filename='bicingbot.log')
+
+# Temporal hardcoded station groups
+STATIONS = {'casa': [153, 154, 339, 165, 166], 'trabajo': [168, 160, 158, 159, 157]}
 
 
 @app.route('/')
@@ -46,7 +60,7 @@ def bicingbot_help():
     return 'Welcome to BicingBot!'
 
 
-@app.route('/webhook', methods=['GET', 'POST'])
+@app.route('/bicingbot', methods=['GET', 'POST'])
 def webhook_handler():
     """
     Handles requests from BicingBot users.
@@ -57,19 +71,29 @@ def webhook_handler():
     update = telegram.Update.de_json(request.get_json(force=True))
     chat_id = update.message.chat.id
     text = update.message.text
-    stations = STATIONS[text]
-    bicing_json = {'stations': [
-        {'id': '157', 'type': 'BIKE', 'latitude': '41.411636', 'longitude': '2.216337', 'streetName': 'C\/Llull',
-         'streetNumber': '396', 'altitude': '5', 'slots': '16', 'bikes': '10', 'nearbyStations': '147, 158, 159, 160',
-         'status': 'OPN'}], 'updateTime': 1466104988}
-    for s in stations:
-        # bicing_response = requests.get('{}{}'.format(BICING_URL, s))
-        # print(bicing_response.text)
-        # bicing_json = bicing_response.json()
-        # resp = '{}: {} slots'.format(s, bicing_json.slots)
-        resp = '{}: {} slots'.format(s, bicing_json['stations'][0]['slots'])
+
+    try:
+        stations = STATIONS[text.lower()]
+        logger.info('Get group: chat_id={}, text={}'.format(chat_id, text))
+    except KeyError:
+        try:
+            stations = [int(text)]
+            logger.info('Get station: chat_id={}, text={}'.format(chat_id, text))
+        except Exception:
+            stations = []
+            logger.info('Unknown command: chat_id={}, text={}'.format(chat_id, text))
+            bot.sendMessage(chat_id=chat_id, text='What? Please, send me a station id')
+
+    for station_id in stations:
+        try:
+            station = Bicing().get_station(station_id)
+            resp = '{} bikes, {} slots [{}] {} {}'.format(station['bikes'], station['slots'], station_id,
+                                                          station['streetName'], station['streetNumber'])
+        except StationNotFoundError:
+            resp = '{}: station not found'.format(station_id)
+        except Exception:
+            resp = '{}: oops, something went wrong'.format(station_id)
         bot.sendMessage(chat_id=chat_id, text=resp)
-    logger.debug('chat_id={}, text={}'.format(chat_id, text))
     return 'Handling your webhook'
 
 
@@ -80,6 +104,6 @@ def set_webhook():
     :return: HTTP_RESPONSE with 200 OK status and a status message.
     """
 
-    bot_response = bot.setWebhook(url_for('webhook_handler'))
+    bot_response = bot.setWebhook('{}/bicingbot'.format(request.url_root))
     logger.debug(bot_response)
     return 'Webhook configured'
