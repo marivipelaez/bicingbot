@@ -111,7 +111,8 @@ def prepare_stations_status_response(stations):
             messages.append(station['error'])
         else:
             messages.append('{} - {} [{}] {} {}'.format(pad_number(station['bikes']), pad_number(station['slots']),
-                                                        station['id'], station['streetName'], station['streetNumber']))
+                                                        station['id'], compact_address(station['streetName']),
+                                                        station['streetNumber']))
     return '\n'.join(messages)
 
 
@@ -126,6 +127,20 @@ def pad_number(num):
     if int(num) < 10:
         return '  ' + num
     return num
+
+
+def compact_address(address):
+    """
+    Reduce address length to fit in the message
+
+    :param address: street name
+    :return: compacted street name
+    """
+    MAX_LENGTH = 14
+    STOP_WORDS = ['Carrer ', 'de ', 'del ']
+    for word in STOP_WORDS:
+        address = address.replace(word, '')
+    return address[:MAX_LENGTH]
 
 
 @app.route('/setwebhook')
