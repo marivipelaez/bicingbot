@@ -23,6 +23,7 @@ import os
 
 import telegram
 from flask import Flask, request
+from telegram.emoji import Emoji
 
 from bicing import Bicing, StationNotFoundError
 
@@ -89,9 +90,9 @@ def webhook_handler():
         try:
             stations_status.append(Bicing().get_station(station_id))
         except StationNotFoundError:
-            stations_status.append({'error': '{}: station not found'.format(station_id)})
+            stations_status.append({'error': '[{}] station not found'.format(station_id)})
         except Exception:
-            stations_status.append({'error': '{}: oops, something went wrong'.format(station_id)})
+            stations_status.append({'error': '[{}] oops, something went wrong'.format(station_id)})
     if stations_status:
         bot.sendMessage(chat_id=chat_id, text=prepare_stations_status_response(stations_status))
     return 'Handling your webhook'
@@ -104,14 +105,27 @@ def prepare_stations_status_response(stations):
     :param stations: list of stations read from Bicing API
     :return: a str with the complete message
     """
-    messages = []
+    messages = [Emoji.BICYCLE + ' - ' + Emoji.NO_ENTRY_SIGN]
     for station in stations:
         if 'error' in station:
             messages.append(station['error'])
         else:
-            messages.append('{} bikes, {} slots [{}] {} {}'.format(station['bikes'], station['slots'], station['id'],
-                                                                   station['streetName'], station['streetNumber']))
+            messages.append('{} - {} [{}] {} {}'.format(pad_number(station['bikes']), pad_number(station['slots']),
+                                                        station['id'], station['streetName'], station['streetNumber']))
     return '\n'.join(messages)
+
+
+def pad_number(num):
+    """
+    If given number has only one digit, a new string with two spaces in the left is returned. Otherwise, the same
+     string is returned.
+
+    :param num: string with an integer
+    :return: padded string
+    """
+    if int(num) < 10:
+        return '  ' + num
+    return num
 
 
 @app.route('/setwebhook')
