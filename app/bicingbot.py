@@ -32,14 +32,15 @@ app = Flask(__name__)
 
 # Initialize logger
 app_path = os.path.dirname(os.path.realpath(__file__))
-output_log_filename = os.path.join(app_path, 'bicingbot.log').replace('\\', '\\\\')
-logging.config.fileConfig(os.path.join(app_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
+output_log_filename = os.path.join(app_path, '..', 'bicingbot.log').replace('\\', '\\\\')
+config_path = os.path.join(app_path, '..', 'conf')
+logging.config.fileConfig(os.path.join(config_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
 global logger
 logger = logging.getLogger(__name__)
 logger.info('Starting BicingBot server')
 
 # Get Telegram token from file
-with open(os.path.join(app_path, 'token'), 'rb') as f:
+with open(os.path.join(config_path, 'token'), 'rb') as f:
     token = f.readline().decode(encoding='UTF-8').rstrip('\n')
 
 # Get bot instance
