@@ -18,72 +18,58 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import logging.config
-import os
+import logging
 
-import telegram
-from flask import Flask, request
 from telegram.emoji import Emoji
 
 from bicing import Bicing, StationNotFoundError
+from telegram_bot import get_bot
 
-# Initialize Flask app
-app = Flask(__name__)
-
-# Initialize logger
-app_path = os.path.dirname(os.path.realpath(__file__))
-output_log_filename = os.path.join(app_path, 'bicingbot.log').replace('\\', '\\\\')
-logging.config.fileConfig(os.path.join(app_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
-global logger
 logger = logging.getLogger(__name__)
-logger.info('Starting BicingBot server')
-
-# Get Telegram token from file
-with open(os.path.join(app_path, 'token'), 'rb') as f:
-    token = f.readline().decode(encoding='UTF-8').rstrip('\n')
-
-# Get bot instance
-global bot
-bot = telegram.Bot(token=token)
 
 # Temporal hardcoded station groups
 STATIONS = {'casa': [153, 154, 339, 165, 166], 'trabajo': [168, 160, 158, 159, 157]}
 
-
-@app.route('/')
-def bicingbot_help():
-    """
-    Welcome point to bicingbot.
-
-    :return: HTTP_RESPONSE with 200 OK status and a welcome message.
-    """
-
-    return 'Welcome to BicingBot!'
+help_message = [
+    'Estos son los comandos que entiendo:',
+    ' /help - muestra esta ayuda',
+    ' /newgroup - crea un grupo de estaciones de Bicing',
+    ' /groups - devuelve el nombre de todos tus grupos',
+    ' NOMBRE_GRUPO - devuelve el estado de todas las estaciones del grupo',
+    ' NÚMERO_ESTACIÓN - devuelve el estado de esa estación',
+]
 
 
-@app.route('/bicingbot', methods=['GET', 'POST'])
-def webhook_handler():
-    """
-    Handles requests from BicingBot users.
+def start_command(chat_id, text):
+    logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
+    message = [
+        'Hola, soy BicingBot y te ayudo a obtener información de las estaciones del Bicing, aunque aún estoy en desarrollo y los grupos no funcionan :(',
+        ''
+    ]
+    get_bot().send_message(chat_id=chat_id, text='\n'.join(message + help_message))
 
-    :return: HTTP_RESPONSE with 200 OK status and a status message.
-    """
 
-    update = telegram.Update.de_json(request.get_json(force=True))
-    chat_id = update.message.chat.id
-    text = update.message.text
+def help_command(chat_id, text):
+    logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
+    get_bot().send_message(chat_id=chat_id, text='\n'.join(help_message))
 
+
+def settings_command(chat_id, text):
+    logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
+
+
+def stations_command(chat_id, text):
     try:
         stations = STATIONS[text.lower()]
-        logger.info('Get group: chat_id={}, text={}'.format(chat_id, text))
+        logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
     except KeyError:
         try:
             stations = [int(text)]
-            logger.info('Get station: chat_id={}, text={}'.format(chat_id, text))
+            logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
         except Exception:
             stations = []
-            logger.info('Unknown command: chat_id={}, text={}'.format(chat_id, text))
-            bot.sendMessage(chat_id=chat_id, text='What? Please, send me a station id')
+            logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
+            get_bot().send_message(chat_id=chat_id, text='What? Please, send me a station id')
 
     stations_status = []
     for station_id in stations:
@@ -94,8 +80,7 @@ def webhook_handler():
         except Exception:
             stations_status.append({'error': '[{}] oops, something went wrong'.format(station_id)})
     if stations_status:
-        bot.sendMessage(chat_id=chat_id, text=prepare_stations_status_response(stations_status))
-    return 'Handling your webhook'
+        get_bot().send_message(chat_id=chat_id, text=prepare_stations_status_response(stations_status))
 
 
 def prepare_stations_status_response(stations):
@@ -141,15 +126,3 @@ def compact_address(address):
     for word in STOP_WORDS:
         address = address.replace(word, '')
     return address[:MAX_LENGTH]
-
-
-@app.route('/setwebhook')
-def set_webhook():
-    """
-    Sets the BicingBot webhook in its Telegram Bot
-    :return: HTTP_RESPONSE with 200 OK status and a status message.
-    """
-
-    bot_response = bot.setWebhook('{}/bicingbot'.format(request.url_root))
-    logger.debug(bot_response)
-    return 'Webhook configured'

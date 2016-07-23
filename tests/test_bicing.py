@@ -25,7 +25,7 @@ import requests_mock
 from nose.tools import assert_equal, assert_raises
 from requests import ConnectionError
 
-from bicing import Bicing, GET_STATION_URL, StationNotFoundError
+from app.bicing import Bicing, GET_STATION_URL, StationNotFoundError
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class TestBicing(unittest.TestCase):
 
         assert_raises(StationNotFoundError, Bicing().get_station, station_id)
 
-    @mock.patch('bicing.requests.get')
+    @mock.patch('app.bicing.requests.get')
     def test_get_station_url_error(self, req_get_mock):
         station_id = 154
         req_get_mock.side_effect = ConnectionError('exception error')
