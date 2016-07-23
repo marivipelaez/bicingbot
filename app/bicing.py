@@ -37,9 +37,11 @@ class Bicing(object):
 
     """
 
-    def get_station(self, station_id):
+    @staticmethod
+    def get_station(station_id):
         """
         Retrieves station status from Bicing API
+
         :param station_id: id of the station
         :return: a dict with the status of the given station
         """

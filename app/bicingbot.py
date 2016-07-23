@@ -54,7 +54,6 @@ def bicingbot_help():
 
     :return: HTTP_RESPONSE with 200 OK status and a welcome message.
     """
-
     return 'Welcome to BicingBot!'
 
 
@@ -85,7 +84,6 @@ def set_webhook():
 
     :return: HTTP_RESPONSE with 200 OK status and a status message.
     """
-
     bot_response = get_bot().setWebhook('{}/bicingbot'.format(request.url_root))
     logger.debug(bot_response)
     return 'Webhook configured'
