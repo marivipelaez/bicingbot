@@ -69,12 +69,12 @@ def webhook_handler():
 
     # Checks and runs received command
     try:
-        command_method = COMMANDS.get(text)
+        command_method = COMMANDS[text]
     except KeyError:
         command_method = stations_command
     command_method(chat_id, text)
 
-    return True
+    return 'Handling your webhook'
 
 
 @app.route('/setwebhook')
