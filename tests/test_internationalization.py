@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from app.internationalization import tr, STRINGS
+from bicingbot.internationalization import tr, STRINGS
 
 
 def test_translate_default_language():

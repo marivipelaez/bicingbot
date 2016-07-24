@@ -24,8 +24,8 @@ import os
 import telegram
 from flask import Flask, request
 
-from commands import start_command, help_command, settings_command, stations_command
-from telegram_bot import get_bot
+from bicingbot.commands import start_command, help_command, settings_command, stations_command
+from bicingbot.telegram_bot import get_bot
 
 # Initialize Flask app
 app = Flask(__name__)

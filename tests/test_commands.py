@@ -20,14 +20,14 @@ limitations under the License.
 
 import mock
 
-from app.commands import stations_command, pad_number, compact_address
-from app.internationalization import STRINGS
+from bicingbot.commands import stations_command, pad_number, compact_address
+from bicingbot.internationalization import STRINGS
 
 chat_id = '333'
 
 
-@mock.patch('app.commands.Bicing')
-@mock.patch('app.commands.get_bot')
+@mock.patch('bicingbot.commands.Bicing')
+@mock.patch('bicingbot.commands.get_bot')
 def test_station_command_station(get_bot, Bicing):
     get_bot.return_value = mock.MagicMock()
     Bicing.return_value = mock.MagicMock()
@@ -44,8 +44,8 @@ def test_station_command_station(get_bot, Bicing):
     assert args['text'].count('\n') == 1
 
 
-@mock.patch('app.commands.Bicing')
-@mock.patch('app.commands.get_bot')
+@mock.patch('bicingbot.commands.Bicing')
+@mock.patch('bicingbot.commands.get_bot')
 def test_station_command_group(get_bot, Bicing):
     get_bot.return_value = mock.MagicMock()
     Bicing.return_value = mock.MagicMock()
@@ -62,8 +62,8 @@ def test_station_command_group(get_bot, Bicing):
     assert args['text'].count('\n') == 5
 
 
-@mock.patch('app.commands.Bicing')
-@mock.patch('app.commands.get_bot')
+@mock.patch('bicingbot.commands.Bicing')
+@mock.patch('bicingbot.commands.get_bot')
 def test_station_command_unknown(get_bot, Bicing):
     get_bot.return_value = mock.MagicMock()
     Bicing.return_value = mock.MagicMock()

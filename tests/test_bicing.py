@@ -24,7 +24,7 @@ import pytest
 import requests_mock
 from requests import ConnectionError
 
-from app.bicing import Bicing, GET_STATION_URL, StationNotFoundError
+from bicingbot.bicing import Bicing, GET_STATION_URL, StationNotFoundError
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def test_get_station_not_found(req_mock):
     assert str(excinfo.value) == 'Station {} not found'.format(station_id)
 
 
-@mock.patch('app.bicing.requests.get')
+@mock.patch('bicingbot.bicing.requests.get')
 def test_get_station_url_error(req_get_mock):
     station_id = 154
     req_get_mock.side_effect = ConnectionError('exception error')
