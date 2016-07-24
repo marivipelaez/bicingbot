@@ -22,9 +22,9 @@ import logging
 
 from telegram.emoji import Emoji
 
-from bicing import Bicing, StationNotFoundError
-from internationalization import tr
-from telegram_bot import get_bot
+from bicingbot.bicing import Bicing, StationNotFoundError
+from bicingbot.internationalization import tr
+from bicingbot.telegram_bot import get_bot
 
 logger = logging.getLogger(__name__)
 
