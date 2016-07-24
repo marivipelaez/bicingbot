@@ -23,6 +23,7 @@ import logging
 from telegram.emoji import Emoji
 
 from bicing import Bicing, StationNotFoundError
+from internationalization import tr
 from telegram_bot import get_bot
 
 logger = logging.getLogger(__name__)
@@ -30,35 +31,46 @@ logger = logging.getLogger(__name__)
 # Temporal hardcoded station groups
 STATIONS = {'casa': [153, 154, 339, 165, 166], 'trabajo': [168, 160, 158, 159, 157]}
 
-help_message = [
-    'Estos son los comandos que entiendo:',
-    ' /help - muestra esta ayuda',
-    ' /newgroup - crea un grupo de estaciones de Bicing',
-    ' /groups - devuelve el nombre de todos tus grupos',
-    ' NOMBRE_GRUPO - devuelve el estado de todas las estaciones del grupo',
-    ' NÚMERO_ESTACIÓN - devuelve el estado de esa estación',
-]
-
 
 def start_command(chat_id, text):
+    """
+    Sends welcome message to the user
+
+    :param chat_id: Telegram chat id
+    :param text: command name
+    """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
-    message = [
-        'Hola, soy BicingBot y te ayudo a obtener información de las estaciones del Bicing, aunque aún estoy en desarrollo y los grupos no funcionan :(',
-        ''
-    ]
-    get_bot().send_message(chat_id=chat_id, text='\n'.join(message + help_message))
+    get_bot().send_message(chat_id=chat_id, text='\n'.join(tr('welcome', chat_id) + tr('help', chat_id)))
 
 
 def help_command(chat_id, text):
+    """
+    Sends help message to the user
+
+    :param chat_id: Telegram chat id
+    :param text: command name
+    """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
-    get_bot().send_message(chat_id=chat_id, text='\n'.join(help_message))
+    get_bot().send_message(chat_id=chat_id, text='\n'.join(tr('help', chat_id)))
 
 
 def settings_command(chat_id, text):
+    """
+    Sends a message to the user with user settings
+
+    :param chat_id: Telegram chat id
+    :param text: command name
+    """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
 
 
 def stations_command(chat_id, text):
+    """
+    Requests the status of a station or a group of stations and sends this message to the user
+
+    :param chat_id: Telegram chat id
+    :param text: station id or group name
+    """
     try:
         stations = STATIONS[text.lower()]
         logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
@@ -69,23 +81,23 @@ def stations_command(chat_id, text):
         except Exception:
             stations = []
             logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
-            get_bot().send_message(chat_id=chat_id, text='What? Please, send me a station id')
+            get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
 
     stations_status = []
     for station_id in stations:
         try:
             stations_status.append(Bicing().get_station(station_id))
         except StationNotFoundError:
-            stations_status.append({'error': '[{}] station not found'.format(station_id)})
+            stations_status.append({'error': tr('station_not_found', chat_id).format(station_id)})
         except Exception:
-            stations_status.append({'error': '[{}] oops, something went wrong'.format(station_id)})
+            stations_status.append({'error': tr('wrong_station', chat_id).format(station_id)})
     if stations_status:
         get_bot().send_message(chat_id=chat_id, text=prepare_stations_status_response(stations_status))
 
 
 def prepare_stations_status_response(stations):
     """
-    Beautify stations status output to be rendered in Telegram
+    Beautifies stations status output to be rendered in Telegram
 
     :param stations: list of stations read from Bicing API
     :return: a str with the complete message
@@ -116,13 +128,13 @@ def pad_number(num):
 
 def compact_address(address):
     """
-    Reduce address length to fit in the message
+    Reduces address length to fit in the message
 
     :param address: street name
     :return: compacted street name
     """
-    MAX_LENGTH = 14
-    STOP_WORDS = ['Carrer ', 'de ', 'del ']
-    for word in STOP_WORDS:
+    max_length = 14
+    stop_words = ['Carrer ', 'de ', 'del ']
+    for word in stop_words:
         address = address.replace(word, '')
-    return address[:MAX_LENGTH]
+    return address[:max_length]

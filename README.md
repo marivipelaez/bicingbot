@@ -7,5 +7,5 @@ public bike rental system.
 To run unit tests, execute:
 
 ```shell
-    $ nosetests
+    $ py.test
 ```
