@@ -29,10 +29,8 @@ def initialize_bot():
     """
     Reads token and gets new instance of Telegram bot
     """
-    app_path = os.path.dirname(os.path.realpath(__file__))
-    config_path = os.path.join(app_path, '..', 'conf')
-
     # Get Telegram token from file
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'conf')
     with open(os.path.join(config_path, 'token'), 'rb') as f:
         token = f.readline().decode(encoding='UTF-8').rstrip('\n')
 

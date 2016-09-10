@@ -31,10 +31,9 @@ from bicingbot.telegram_bot import get_bot
 app = Flask(__name__)
 
 # Initialize logger
-app_path = os.path.dirname(os.path.realpath(__file__))
-output_log_filename = os.path.join(app_path, '..', 'bicingbot.log').replace('\\', '\\\\')
-config_path = os.path.join(app_path, '..', 'conf')
-logging.config.fileConfig(os.path.join(config_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
+root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+output_log_filename = os.path.join(root_path, 'bicingbot.log').replace('\\', '\\\\')
+logging.config.fileConfig(os.path.join(root_path, 'conf', 'logging.conf'), {'logfilename': output_log_filename}, False)
 global logger
 logger = logging.getLogger(__name__)
 logger.info('Starting BicingBot server')
