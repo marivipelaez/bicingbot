@@ -54,12 +54,47 @@ class DatabaseConnection(object):
 
     def create_group(self, chat_id, name, stations):
         """
-        Inserts a new group definition.
-        :param chat_id: User identifier
+        Inserts a new group definition
+        :param chat_id: user identifier
         :param name: name of the group
         :param stations: list of integers of stations ids
         """
         cursor = self.connection.cursor()
         for station_id in stations:
             cursor.execute("INSERT INTO groups (chat_id, name, station_id) VALUES (?,?,?)", (chat_id, name, station_id))
+        self.connection.commit()
+
+    def get_group(self, chat_id, name):
+        """
+        Retrieves all the information of a group
+        :param chat_id: user that created the group
+        :param name: group to read
+        :return: a dictionary with the information of the group
+        """
+        cursor = self.connection.cursor()
+        group = {'chat_id': chat_id, 'name': name, 'stations': []}
+        for row in cursor.execute('SELECT station_id FROM groups WHERE chat_id=? AND name=?', (chat_id, name)):
+            group['stations'].append(row[0])
+        return group
+
+    def get_groups_names(self, chat_id):
+        """
+        Retrieves all groups from a chat_id
+        :param chat_id: user that created the groups
+        :return: a list of group names
+        """
+        cursor = self.connection.cursor()
+        groups_names = []
+        for row in cursor.execute('SELECT name FROM groups WHERE chat_id=? group by name', (chat_id,)):
+            groups_names.append(row[0])
+        return groups_names
+
+    def delete_group(self, chat_id, name):
+        """
+        Deletes an existing group
+        :param chat_id: user identifier
+        :param name: name of the group
+        """
+        cursor = self.connection.cursor()
+        cursor.execute("DELETE FROM groups WHERE chat_id=? AND name=?", (chat_id, name))
         self.connection.commit()

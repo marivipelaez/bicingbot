@@ -18,20 +18,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from bicingbot.database_conn import DatabaseConnection
 import os
 
+import pytest
 
-def test_create_group():
+from bicingbot.database_conn import DatabaseConnection
+from sqlite3.dbapi2 import IntegrityError
+
+
+@pytest.yield_fixture()
+def database_connection():
     config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'conf')
     os.remove(os.path.join(config_path, 'bicingbot_test.db'))
-    database_connection = DatabaseConnection(database='bicingbot_test.db')
-    database_connection.create_schema()
+    conn = DatabaseConnection(database='bicingbot_test.db')
+    conn.create_schema()
+    yield conn
+    conn.close()
+
+
+@pytest.yield_fixture()
+def check_connection():
+    conn = DatabaseConnection(database='bicingbot_test.db')
+    yield conn
+    conn.close()
+
+
+def test_create_group(database_connection, check_connection):
     database_connection.create_group(chat_id=1, name='test_group', stations=[1, 2, 3])
 
-    cursor = database_connection.connection.cursor()
-    rows = cursor.execute('select * from groups').fetchall()
-    database_connection.close()
+    cursor = check_connection.connection.cursor()
+    rows = cursor.execute('SELECT * FROM groups').fetchall()
     assert len(rows) == 3
     assert rows[0][:3] == (1, 'test_group', 1)
     assert rows[1][:3] == (1, 'test_group', 2)
@@ -39,3 +55,42 @@ def test_create_group():
     assert rows[0][3] is not None
     assert rows[0][3] == rows[1][3]
     assert rows[0][3] == rows[2][3]
+
+
+def test_create_group_existent(database_connection, check_connection):
+    with pytest.raises(IntegrityError):
+        database_connection.create_group(chat_id=1, name='test_group', stations=[1, 1, 3])
+
+    cursor = check_connection.connection.cursor()
+    rows = cursor.execute('SELECT * FROM groups').fetchall()
+    assert len(rows) == 0
+
+
+def test_get_group(database_connection):
+    database_connection.create_group(chat_id=1, name='test_group', stations=[1, 2, 3])
+    database_connection.create_group(chat_id=2, name='test_group', stations=[1, 2, 3])
+    group = database_connection.get_group(1, 'test_group')
+
+    assert group == {'chat_id': 1, 'name': 'test_group', 'stations': [1, 2, 3]}
+
+
+def test_get_groups_names(database_connection):
+    database_connection.create_group(chat_id=1, name='test_group', stations=[1, 2, 3])
+    database_connection.create_group(chat_id=1, name='test_group2', stations=[1, 2, 3])
+    database_connection.create_group(chat_id=2, name='test_group', stations=[1, 2, 3])
+    groups_names = database_connection.get_groups_names(1)
+
+    assert groups_names == ['test_group', 'test_group2']
+
+
+def test_delete_group(database_connection, check_connection):
+    database_connection.create_group(chat_id=1, name='test_group', stations=[1, 2, 3])
+    database_connection.delete_group(1, 'test_group')
+
+    cursor = check_connection.connection.cursor()
+    rows = cursor.execute('SELECT * FROM groups').fetchall()
+    assert len(rows) == 0
+
+
+def test_delete_group_nonexisting(database_connection):
+    database_connection.delete_group(1, 'test_group')
