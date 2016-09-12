@@ -23,6 +23,7 @@ import logging
 from telegram.emoji import Emoji
 
 from bicingbot.bicing import Bicing, StationNotFoundError
+from bicingbot.groups import get_group_status, group_command
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
 
@@ -71,8 +72,11 @@ def stations_command(chat_id, text):
     :param chat_id: Telegram chat id
     :param text: station id or group name
     """
+    if get_group_status(chat_id) > 0 or text in ['newgroup', '/newgroup']:
+        return group_command(chat_id, text)
+
     try:
-        stations = STATIONS[text.lower()]
+        stations = STATIONS[text]
         logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
     except KeyError:
         try:

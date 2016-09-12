@@ -36,7 +36,10 @@ STRINGS['es'] = {
     ],
     'unknown_command': 'Lo siento, no te he entendido. Si necesitas ayuda envíame /help.',
     'station_not_found': '[{}] estación no encontrada',
-    'wrong_station': '[{}] ups, algo ha ido mal'
+    'wrong_station': '[{}] ups, algo ha ido mal',
+    'newgroup_name': 'Envíame el nombre del nuevo grupo de estaciones',
+    'newgroup_stations': 'Envíame el número de cada estación del grupo. Cuando termines envía /fin',
+    'newgroup_created': 'Tu nuevo grupo {} está listo'
 }
 
 STRINGS['en'] = {
@@ -56,7 +59,10 @@ STRINGS['en'] = {
     ],
     'unknown_command': "I'm sorry, I don't understand you. Send me /help to get my commands.",
     'station_not_found': '[{}] station not found',
-    'wrong_station': '[{}] oops, something went wrong'
+    'wrong_station': '[{}] oops, something went wrong',
+    'newgroup_name': 'Send me the name of your new stations group',
+    'newgroup_stations': 'Send me the number of each station within the group. To finish, send /end',
+    'newgroup_created': 'Your new group {} is ready'
 }
 
 DEFAULT_LANGUAGE = 'es'
