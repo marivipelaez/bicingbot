@@ -83,6 +83,11 @@ def set_webhook():
 
     :return: HTTP_RESPONSE with 200 OK status and a status message.
     """
-    bot_response = get_bot().setWebhook('{}/bicingbot'.format(request.url_root))
-    logger.debug(bot_response)
-    return 'Webhook configured'
+    response = 'Webhook configured'
+    if request.url_root.startswith('https'):
+        bot_response = get_bot().setWebhook('{}/bicingbot'.format(request.url_root))
+        logger.debug(bot_response)
+    else:
+        response = 'Bad webhook: https url must be provided for webhook'
+        logger.warn(response)
+    return response
