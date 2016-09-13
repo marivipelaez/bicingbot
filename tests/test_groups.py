@@ -20,34 +20,36 @@ limitations under the License.
 
 import mock
 
-from bicingbot.groups import group_command, del_group_status, GROUPS_CACHE
+from bicingbot.groups import newgroup_command, del_group_status, GROUPS_CACHE
 from bicingbot.internationalization import STRINGS
 
 chat_id = '333'
 
 
+@mock.patch('bicingbot.commands.get_bot')
 @mock.patch('bicingbot.groups.DatabaseConnection')
 @mock.patch('bicingbot.groups.get_bot')
-def test_group_command_newgroup(get_bot, DatabaseConnection):
+def test_newgroup_command_newgroup(get_bot, DatabaseConnection, commands_get_bot):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
+    commands_get_bot.return_value = mock.MagicMock()
     del_group_status(chat_id)
 
-    group_command(chat_id, 'newgroup')
+    newgroup_command(chat_id, 'newgroup')
 
     # Check bot calls and temporal cache
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_name'])
     assert GROUPS_CACHE[chat_id]['status'] == 1
 
-    group_command(chat_id, 'casa')
+    newgroup_command(chat_id, 'casa')
 
     # Check bot calls and temporal cache
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_stations'])
     assert GROUPS_CACHE[chat_id]['status'] == 2
     assert GROUPS_CACHE[chat_id]['name'] == 'casa'
 
-    group_command(chat_id, '1')
-    group_command(chat_id, '2')
+    newgroup_command(chat_id, '1')
+    newgroup_command(chat_id, '2')
 
     # Check bot calls and temporal cache
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_stations'])
@@ -55,8 +57,9 @@ def test_group_command_newgroup(get_bot, DatabaseConnection):
     assert GROUPS_CACHE[chat_id]['name'] == 'casa'
     assert GROUPS_CACHE[chat_id]['stations'] == [1, 2]
 
-    group_command(chat_id, 'end')
+    newgroup_command(chat_id, 'end')
 
     # Check bot and database calls
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_created'].format('casa'))
     DatabaseConnection().create_group.assert_called_with(chat_id=chat_id, name='casa', stations=[1, 2])
+    commands_get_bot().send_message.assert_called_once()

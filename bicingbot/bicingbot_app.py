@@ -24,7 +24,7 @@ import os
 import telegram
 from flask import Flask, request
 
-from bicingbot.commands import start_command, help_command, settings_command, stations_command
+from bicingbot.commands import start_command, help_command, settings_command, bicingbot_commands
 from bicingbot.telegram_bot import get_bot
 
 # Initialize Flask app
@@ -65,12 +65,13 @@ def webhook_handler():
     update = telegram.Update.de_json(request.get_json(force=True))
     chat_id = update.message.chat.id
     text = update.message.text.lower()
+    logger.debug("Received message '{}' from chat_id={}".format(text, chat_id))
 
     # Checks and runs received command
     try:
         command_method = COMMANDS[text]
     except KeyError:
-        command_method = stations_command
+        command_method = bicingbot_commands
     command_method(chat_id, text)
 
     return 'Handling your webhook'

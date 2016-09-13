@@ -23,14 +23,17 @@ import logging
 from telegram.emoji import Emoji
 
 from bicingbot.bicing import Bicing, StationNotFoundError
-from bicingbot.groups import get_group_status, group_command
+from bicingbot.groups import get_group_status, newgroup_command
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
+from bicingbot.database_conn import DatabaseConnection
 
 logger = logging.getLogger(__name__)
 
-# Temporal hardcoded station groups
-STATIONS = {'casa': [153, 154, 339, 165, 166], 'trabajo': [168, 160, 158, 159, 157]}
+COMMANDS = {
+    'newgroup': ['/newgroup', 'newgroup', '/nuevogrupo', 'nuevogrupo'],
+    'end': ['/end', 'end', '/fin', 'fin']
+}
 
 
 def start_command(chat_id, text):
@@ -65,28 +68,41 @@ def settings_command(chat_id, text):
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
 
 
-def stations_command(chat_id, text):
+def bicingbot_commands(chat_id, text):
     """
-    Requests the status of a station or a group of stations and sends this message to the user
+    Handles bicingbot specific commands and sends the corresponding messages to the user
 
     :param chat_id: Telegram chat id
-    :param text: station id or group name
+    :param text: command to be executed
     """
-    if get_group_status(chat_id) > 0 or text in ['newgroup', '/newgroup']:
-        return group_command(chat_id, text)
+    if get_group_status(chat_id) > 0 or text in COMMANDS['newgroup']:
+        return newgroup_command(chat_id, text)
 
-    try:
-        stations = STATIONS[text]
+    # Check if message is an existing group
+    group = DatabaseConnection().get_group(chat_id, text)
+    if group:
+        stations = group['stations']
         logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
-    except KeyError:
+    else:
+        # Check if message is a station
         try:
             stations = [int(text)]
             logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
-        except Exception:
-            stations = []
+        except ValueError:
             logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
             get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+            return
 
+    send_stations_status(chat_id, stations)
+
+
+def send_stations_status(chat_id, stations):
+    """
+    Sends the status of the given stations to the user
+
+    :param chat_id: Telegram chat id
+    :param stations: list of stations identifiers
+    """
     stations_status = []
     for station_id in stations:
         try:

@@ -65,9 +65,9 @@ def del_group_status(chat_id):
         pass
 
 
-def group_command(chat_id, text):
+def newgroup_command(chat_id, text):
     """
-
+    Manages the workflow to create a new group.
 
     :param chat_id: Telegram chat id
     :param text: group command
@@ -79,17 +79,21 @@ def group_command(chat_id, text):
         set_group_status(chat_id, 1)
         return
     elif group_status == 1:
-        # TODO: check forbidden group names
+        # TODO: check forbidden group names: int, /*, in COMMANDS
         # TODO: check existing group names
         GROUPS_CACHE[chat_id]['name'] = text
         get_bot().send_message(chat_id=chat_id, text=tr('newgroup_stations', chat_id))
         set_group_status(chat_id, 2)
     elif group_status == 2:
-        if text in ['/end', 'end', '/fin', 'fin']:
+        from bicingbot.commands import send_stations_status, COMMANDS
+        if text in COMMANDS['end']:
+            # TODO allow group modification
+            # TODO not to create a new group without stations
             DatabaseConnection().create_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'],
                                               stations=GROUPS_CACHE[chat_id]['stations'])
             get_bot().send_message(chat_id=chat_id,
                                    text=tr('newgroup_created', chat_id).format(GROUPS_CACHE[chat_id]['name']))
+            send_stations_status(chat_id, GROUPS_CACHE[chat_id]['stations'])
             del_group_status(chat_id)
         else:
             # TODO: check integer stations

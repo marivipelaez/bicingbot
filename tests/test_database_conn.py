@@ -74,6 +74,12 @@ def test_get_group(database_connection):
     assert group == {'chat_id': 1, 'name': 'test_group', 'stations': [1, 2, 3]}
 
 
+def test_get_group_nonexisting(database_connection):
+    group = database_connection.get_group(1, 'test_group')
+
+    assert group is None
+
+
 def test_get_groups_names(database_connection):
     database_connection.create_group(chat_id=1, name='test_group', stations=[1, 2, 3])
     database_connection.create_group(chat_id=1, name='test_group2', stations=[1, 2, 3])

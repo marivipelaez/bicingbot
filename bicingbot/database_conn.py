@@ -55,6 +55,7 @@ class DatabaseConnection(object):
     def create_group(self, chat_id, name, stations):
         """
         Inserts a new group definition
+
         :param chat_id: user identifier
         :param name: name of the group
         :param stations: list of integers of stations ids
@@ -67,19 +68,23 @@ class DatabaseConnection(object):
     def get_group(self, chat_id, name):
         """
         Retrieves all the information of a group
+
         :param chat_id: user that created the group
         :param name: group to read
-        :return: a dictionary with the information of the group
+        :return: a dictionary with the information of the group or None if it does not exist
         """
         cursor = self.connection.cursor()
-        group = {'chat_id': chat_id, 'name': name, 'stations': []}
+        stations = []
         for row in cursor.execute('SELECT station_id FROM groups WHERE chat_id=? AND name=?', (chat_id, name)):
-            group['stations'].append(row[0])
-        return group
+            stations.append(row[0])
+        if stations:
+            return {'chat_id': chat_id, 'name': name, 'stations': stations}
+        return None
 
     def get_groups_names(self, chat_id):
         """
         Retrieves all groups from a chat_id
+
         :param chat_id: user that created the groups
         :return: a list of group names
         """
@@ -92,6 +97,7 @@ class DatabaseConnection(object):
     def delete_group(self, chat_id, name):
         """
         Deletes an existing group
+
         :param chat_id: user identifier
         :param name: name of the group
         """
