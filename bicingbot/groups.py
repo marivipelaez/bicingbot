@@ -85,8 +85,8 @@ def newgroup_command(chat_id, text):
         get_bot().send_message(chat_id=chat_id, text=tr('newgroup_stations', chat_id))
         set_group_status(chat_id, 2)
     elif group_status == 2:
-        from bicingbot.commands import send_stations_status, COMMANDS
-        if text in COMMANDS['end']:
+        from bicingbot.commands import send_stations_status, COMMANDS_ALIAS
+        if text in COMMANDS_ALIAS['end']:
             # TODO allow group modification
             # TODO not to create a new group without stations
             DatabaseConnection().create_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'],

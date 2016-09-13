@@ -24,7 +24,7 @@ import os
 import telegram
 from flask import Flask, request
 
-from bicingbot.commands import start_command, help_command, settings_command, bicingbot_commands
+from bicingbot.commands import bicingbot_commands
 from bicingbot.telegram_bot import get_bot
 
 # Initialize Flask app
@@ -37,13 +37,6 @@ logging.config.fileConfig(os.path.join(root_path, 'conf', 'logging.conf'), {'log
 global logger
 logger = logging.getLogger(__name__)
 logger.info('Starting BicingBot server')
-
-# Telegram bots basic commands
-COMMANDS = {
-    '/start': start_command,
-    '/help': help_command,
-    '/settings': settings_command
-}
 
 
 @app.route('/')
@@ -67,12 +60,8 @@ def webhook_handler():
     text = update.message.text.lower()
     logger.debug("Received message '{}' from chat_id={}".format(text, chat_id))
 
-    # Checks and runs received command
-    try:
-        command_method = COMMANDS[text]
-    except KeyError:
-        command_method = bicingbot_commands
-    command_method(chat_id, text)
+    # Runs received command
+    bicingbot_commands(chat_id, text)
 
     return 'Handling your webhook'
 

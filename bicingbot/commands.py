@@ -30,11 +30,6 @@ from bicingbot.database_conn import DatabaseConnection
 
 logger = logging.getLogger(__name__)
 
-COMMANDS = {
-    'newgroup': ['/newgroup', 'newgroup', '/nuevogrupo', 'nuevogrupo'],
-    'end': ['/end', 'end', '/fin', 'fin']
-}
-
 
 def start_command(chat_id, text):
     """
@@ -68,6 +63,18 @@ def settings_command(chat_id, text):
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
 
 
+COMMANDS_METHODS = {
+    '/start': start_command,
+    '/help': help_command,
+    '/settings': settings_command
+}
+
+COMMANDS_ALIAS = {
+    'newgroup': ['/newgroup', 'newgroup', '/nuevogrupo', 'nuevogrupo'],
+    'end': ['/end', 'end', '/fin', 'fin']
+}
+
+
 def bicingbot_commands(chat_id, text):
     """
     Handles bicingbot specific commands and sends the corresponding messages to the user
@@ -75,7 +82,10 @@ def bicingbot_commands(chat_id, text):
     :param chat_id: Telegram chat id
     :param text: command to be executed
     """
-    if get_group_status(chat_id) > 0 or text in COMMANDS['newgroup']:
+    if text in COMMANDS_METHODS.keys():
+        return COMMANDS_METHODS[text](chat_id, text)
+
+    if get_group_status(chat_id) > 0 or text in COMMANDS_ALIAS['newgroup']:
         return newgroup_command(chat_id, text)
 
     # Check if message is an existing group
