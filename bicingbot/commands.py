@@ -23,10 +23,11 @@ import logging
 from telegram.emoji import Emoji
 
 from bicingbot.bicing import Bicing, StationNotFoundError
+from bicingbot.database_conn import DatabaseConnection
 from bicingbot.groups import get_group_status, newgroup_command
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
-from bicingbot.database_conn import DatabaseConnection
+from bicingbot.utils import pad_number, compact_address, normalize_command_name
 
 logger = logging.getLogger(__name__)
 
@@ -64,15 +65,20 @@ def settings_command(chat_id, text):
 
 
 COMMANDS_METHODS = {
-    '/start': start_command,
-    '/help': help_command,
-    '/settings': settings_command
+    'start': start_command,
+    'help': help_command,
+    'settings': settings_command
 }
 
 COMMANDS_ALIAS = {
-    'newgroup': ['/newgroup', 'newgroup', '/nuevogrupo', 'nuevogrupo'],
-    'end': ['/end', 'end', '/fin', 'fin']
+    'start': ['start'],
+    'help': ['help'],
+    'settings': ['settings'],
+    'newgroup': ['newgroup', 'nuevogrupo'],
+    'end': ['end', 'fin']
 }
+
+COMMANDS = [value for values in COMMANDS_ALIAS.values() for value in values]
 
 
 def bicingbot_commands(chat_id, text):
@@ -82,6 +88,8 @@ def bicingbot_commands(chat_id, text):
     :param chat_id: Telegram chat id
     :param text: command to be executed
     """
+    text = normalize_command_name(text)
+
     if text in COMMANDS_METHODS.keys():
         return COMMANDS_METHODS[text](chat_id, text)
 
@@ -141,30 +149,3 @@ def prepare_stations_status_response(stations):
                                                         station['id'], compact_address(station['streetName']),
                                                         station['streetNumber']))
     return '\n'.join(messages)
-
-
-def pad_number(num):
-    """
-    If given number has only one digit, a new string with two spaces in the left is returned. Otherwise, the same
-     string is returned.
-
-    :param num: string with an integer
-    :return: padded string
-    """
-    if int(num) < 10:
-        return '  ' + num
-    return num
-
-
-def compact_address(address):
-    """
-    Reduces address length to fit in the message
-
-    :param address: street name
-    :return: compacted street name
-    """
-    max_length = 14
-    stop_words = ['Carrer ', 'de ', 'del ']
-    for word in stop_words:
-        address = address.replace(word, '')
-    return address[:max_length]

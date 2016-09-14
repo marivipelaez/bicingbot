@@ -39,7 +39,9 @@ STRINGS['es'] = {
     'wrong_station': '[{}] ups, algo ha ido mal',
     'newgroup_name': 'Envíame el nombre del nuevo grupo de estaciones',
     'newgroup_stations': 'Envíame el número de cada estación del grupo. Cuando termines envía /fin',
-    'newgroup_created': 'Tu nuevo grupo {} está listo'
+    'newgroup_created': 'Tu nuevo grupo /{} está listo',
+    'newgroup_name_format_error': ('Lo siento, ese nombre no es válido. No puede ser un número, '
+                                   'ni contener espacios o /,ni llamarse igual que alguno de mis comandos')
 }
 
 STRINGS['en'] = {
@@ -62,7 +64,9 @@ STRINGS['en'] = {
     'wrong_station': '[{}] oops, something went wrong',
     'newgroup_name': 'Send me the name of your new stations group',
     'newgroup_stations': 'Send me the number of each station within the group. To finish, send /end',
-    'newgroup_created': 'Your new group {} is ready'
+    'newgroup_created': 'Your new group /{} is ready',
+    'newgroup_name_format_error': ('So sorry, but that name is not valid. It cannot be a number, '
+                                   'or contain blanks or /, or have the same value as any of my commands.')
 }
 
 DEFAULT_LANGUAGE = 'es'

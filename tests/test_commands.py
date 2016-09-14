@@ -20,10 +20,9 @@ limitations under the License.
 
 import mock
 
-from bicingbot.commands import bicingbot_commands, pad_number, compact_address
-from bicingbot.internationalization import STRINGS
 from bicingbot import groups
-
+from bicingbot.commands import bicingbot_commands
+from bicingbot.internationalization import STRINGS
 
 chat_id = '333'
 
@@ -106,31 +105,3 @@ def test_bicingbot_command_unknown(get_bot, Bicing, DatabaseConnection):
 
     # Check that send message has been called with correct arguments
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['unknown_command'])
-
-
-def test_pad_number_one_digit():
-    assert pad_number('5') == '  5'
-
-
-def test_pad_number_two_digits():
-    assert pad_number('10') == '10'
-
-
-def test_compact_address_short():
-    assert compact_address('Pujades') == 'Pujades'
-
-
-def test_compact_address_long():
-    assert compact_address('Passeig Sant Joan') == 'Passeig Sant J'
-
-
-def test_compact_address_carrer():
-    assert compact_address('Carrer Pujades') == 'Pujades'
-
-
-def test_compact_address_de():
-    assert compact_address('Carrer de Pujades') == 'Pujades'
-
-
-def test_compact_address_del():
-    assert compact_address('Ronda del Mig') == 'Ronda Mig'

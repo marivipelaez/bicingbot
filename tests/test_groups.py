@@ -20,7 +20,7 @@ limitations under the License.
 
 import mock
 
-from bicingbot.groups import newgroup_command, del_group_status, GROUPS_CACHE
+from bicingbot.groups import newgroup_command, del_group_status, GROUPS_CACHE, is_valid_group_name
 from bicingbot.internationalization import STRINGS
 
 chat_id = '333'
@@ -63,3 +63,43 @@ def test_newgroup_command_newgroup(get_bot, DatabaseConnection, commands_get_bot
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_created'].format('casa'))
     DatabaseConnection().create_group.assert_called_with(chat_id=chat_id, name='casa', stations=[1, 2])
     commands_get_bot().send_message.assert_called_once()
+
+
+@mock.patch('bicingbot.commands.get_bot')
+@mock.patch('bicingbot.groups.DatabaseConnection')
+@mock.patch('bicingbot.groups.get_bot')
+def test_newgroup_command_newgroup_bad_formatted_name(get_bot, DatabaseConnection, commands_get_bot):
+    get_bot.return_value = mock.MagicMock()
+    DatabaseConnection.return_value = mock.MagicMock()
+    commands_get_bot.return_value = mock.MagicMock()
+    del_group_status(chat_id)
+
+    newgroup_command(chat_id, 'newgroup')
+
+    # Check name is number
+    newgroup_command(chat_id, '1')
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_name_format_error'])
+    assert GROUPS_CACHE[chat_id]['status'] == 1
+
+    # Check name starts with /
+    newgroup_command(chat_id, '/casa')
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_name_format_error'])
+    assert GROUPS_CACHE[chat_id]['status'] == 1
+
+    # Check name is a command
+    newgroup_command(chat_id, 'settings')
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_name_format_error'])
+    assert GROUPS_CACHE[chat_id]['status'] == 1
+
+
+def test_is_valid_group_name():
+    assert is_valid_group_name('casa')
+    assert is_valid_group_name('casacasacasacasacasa')
+    assert is_valid_group_name('0.5')
+    assert not is_valid_group_name('1')
+    assert not is_valid_group_name('/14')
+    assert not is_valid_group_name('casa/paco')
+    assert not is_valid_group_name('casa paco')
+    assert not is_valid_group_name('casacasacasacasacasac')
+    assert not is_valid_group_name('settings')
+    assert not is_valid_group_name('fin')

@@ -73,19 +73,21 @@ def newgroup_command(chat_id, text):
     :param text: group command
     """
     group_status = get_group_status(chat_id)
+    from bicingbot.commands import send_stations_status, COMMANDS_ALIAS
     if group_status == 0:
         logger.info('COMMAND /newgroup: chat_id={}'.format(chat_id))
         get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name', chat_id))
         set_group_status(chat_id, 1)
         return
     elif group_status == 1:
-        # TODO: check forbidden group names: int, /*, in COMMANDS
-        # TODO: check existing group names
-        GROUPS_CACHE[chat_id]['name'] = text
-        get_bot().send_message(chat_id=chat_id, text=tr('newgroup_stations', chat_id))
-        set_group_status(chat_id, 2)
+        if not is_valid_group_name(text):
+            get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
+        else:
+            # TODO: check existing group names
+            GROUPS_CACHE[chat_id]['name'] = text
+            get_bot().send_message(chat_id=chat_id, text=tr('newgroup_stations', chat_id))
+            set_group_status(chat_id, 2)
     elif group_status == 2:
-        from bicingbot.commands import send_stations_status, COMMANDS_ALIAS
         if text in COMMANDS_ALIAS['end']:
             # TODO allow group modification
             # TODO not to create a new group without stations
@@ -98,3 +100,23 @@ def newgroup_command(chat_id, text):
         else:
             # TODO: check integer stations
             GROUPS_CACHE[chat_id]['stations'].append(int(text))
+
+
+def is_valid_group_name(text):
+    """
+    Checks if the given text fits into group name format
+
+    :param text: string to validate
+    :return: True if the text is a valid group name, False otherwise
+    """
+    # TODO validate with regex
+    from bicingbot.commands import COMMANDS
+    is_valid = '/' not in text and ' ' not in text
+    is_valid = is_valid and len(text) < 21
+    is_valid = is_valid and text not in COMMANDS
+    try:
+        int(text)
+        is_valid = False
+    except ValueError:
+        pass
+    return is_valid
