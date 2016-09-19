@@ -42,10 +42,12 @@ STRINGS['es'] = {
     'newgroup_created': 'Tu nuevo grupo /{} está listo',
     'newgroup_name_format_error': ('Lo siento, ese nombre no es válido. No puede ser un número, '
                                    'ni contener espacios o /,ni llamarse igual que alguno de mis comandos'),
-    'newgroup_name_already_existing': ('Ya tienes un grupo con ese nombre. Para no sobreescribirlo, envía /fin.'
-                                       'Si quieres continuar, envíame el número de cada estación del grupo y cuando'
+    'newgroup_name_already_existing': ('Ya tienes un grupo con ese nombre. Para no sobreescribirlo, envía /fin. '
+                                       'Si quieres continuar, envíame el número de cada estación del grupo y cuando '
                                        'termines envía /fin'),
-    'newgroup_not_created': 'No me has enviado ninguna estación, así que no he guardado el grupo'
+    'newgroup_not_created': 'No me has enviado ninguna estación, así que no he guardado el grupo',
+    'newgroup_unknown_command': ('Lo siento, no es un número de estación válido. Envíame un número correcto o /fin '
+                                 'para terminar')
 }
 
 STRINGS['en'] = {
@@ -71,10 +73,12 @@ STRINGS['en'] = {
     'newgroup_created': 'Your new group /{} is ready',
     'newgroup_name_format_error': ('So sorry, but that name is not valid. It cannot be a number, '
                                    'or contain blanks or /, or have the same value as any of my commands.'),
-    'newgroup_name_already_existing': ('You already have a group with that name. Not to overwrite it, send me /end.'
-                                       'If you want to continue, send me the number of each station within the group'
+    'newgroup_name_already_existing': ('You already have a group with that name. Not to overwrite it, send me /end. '
+                                       'If you want to continue, send me the number of each station within the group '
                                        'and when you are done, send me /end'),
-    'newgroup_not_created': 'You sent me no stations, so I did not store the group'
+    'newgroup_not_created': 'You sent me no stations, so I did not store the group',
+    'newgroup_unknown_command': ('So sorry, this is not a valid station number. Send me a valid number or /end to '
+                                 'finish')
 }
 
 DEFAULT_LANGUAGE = 'es'

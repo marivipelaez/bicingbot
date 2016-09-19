@@ -23,6 +23,7 @@ import logging
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
+from bicingbot.utils import is_integer
 
 logger = logging.getLogger(__name__)
 
@@ -101,9 +102,11 @@ def newgroup_command(chat_id, text):
             else:
                 get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
             del_group_status(chat_id)
-        else:
-            # TODO: check integer stations
+        elif is_integer(text):
+            # TODO: check number of stations
             GROUPS_CACHE[chat_id]['stations'].append(int(text))
+        else:
+            get_bot().send_message(chat_id=chat_id, text=tr('newgroup_unknown_command', chat_id))
 
 
 def is_valid_group_name(text):
@@ -118,9 +121,5 @@ def is_valid_group_name(text):
     is_valid = '/' not in text and ' ' not in text
     is_valid = is_valid and len(text) < 21
     is_valid = is_valid and text not in COMMANDS
-    try:
-        int(text)
-        is_valid = False
-    except ValueError:
-        pass
+    is_valid = is_valid and not is_integer(text)
     return is_valid

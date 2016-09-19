@@ -53,3 +53,17 @@ def compact_address(address):
     for word in stop_words:
         address = address.replace(word, '')
     return address[:max_length]
+
+
+def is_integer(text):
+    """
+    Checks if the given text is an integer
+
+    :param text: string to validate
+    :return: True if the text is an integer, False otherwise
+    """
+    try:
+        int(text)
+        return True
+    except ValueError:
+        return False

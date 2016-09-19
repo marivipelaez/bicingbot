@@ -27,7 +27,7 @@ from bicingbot.database_conn import DatabaseConnection
 from bicingbot.groups import get_group_status, newgroup_command
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
-from bicingbot.utils import pad_number, compact_address, normalize_command_name
+from bicingbot.utils import pad_number, compact_address, normalize_command_name, is_integer
 
 logger = logging.getLogger(__name__)
 
@@ -99,19 +99,15 @@ def bicingbot_commands(chat_id, text):
     # Check if message is an existing group
     group = DatabaseConnection().get_group(chat_id, text)
     if group:
-        stations = group['stations']
         logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
+        send_stations_status(chat_id, group['stations'])
+    elif is_integer(text):
+        logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
+        send_stations_status(chat_id, [int(text)])
     else:
-        # Check if message is a station
-        try:
-            stations = [int(text)]
-            logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
-        except ValueError:
-            logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
-            get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
-            return
-
-    send_stations_status(chat_id, stations)
+        logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
+        get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+    # TODO: add groups command
 
 
 def send_stations_status(chat_id, stations):
