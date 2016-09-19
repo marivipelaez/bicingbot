@@ -32,6 +32,7 @@ chat_id = '333'
 def test_newgroup_command_newgroup(get_bot, DatabaseConnection, commands_get_bot):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_group.return_value = None
     commands_get_bot.return_value = mock.MagicMock()
     del_group_status(chat_id)
 
@@ -61,6 +62,7 @@ def test_newgroup_command_newgroup(get_bot, DatabaseConnection, commands_get_bot
 
     # Check bot and database calls
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_created'].format('casa'))
+    DatabaseConnection().delete_group.assert_called_with(chat_id=chat_id, name='casa')
     DatabaseConnection().create_group.assert_called_with(chat_id=chat_id, name='casa', stations=[1, 2])
     commands_get_bot().send_message.assert_called_once()
 
@@ -90,6 +92,56 @@ def test_newgroup_command_newgroup_bad_formatted_name(get_bot, DatabaseConnectio
     newgroup_command(chat_id, 'settings')
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_name_format_error'])
     assert GROUPS_CACHE[chat_id]['status'] == 1
+
+
+@mock.patch('bicingbot.commands.get_bot')
+@mock.patch('bicingbot.groups.DatabaseConnection')
+@mock.patch('bicingbot.groups.get_bot')
+def test_newgroup_command_newgroup_existing_name_overwrite(get_bot, DatabaseConnection, commands_get_bot):
+    get_bot.return_value = mock.MagicMock()
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_group.return_value = {'chat_id': 333, 'name': 'test_group', 'stations': [1, 2, 3]}
+    commands_get_bot.return_value = mock.MagicMock()
+    del_group_status(chat_id)
+
+    newgroup_command(chat_id, 'newgroup')
+
+    # Check warning message is sent
+    newgroup_command(chat_id, 'casa')
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_name_already_existing'])
+    assert GROUPS_CACHE[chat_id]['status'] == 2
+
+    newgroup_command(chat_id, '1')
+    newgroup_command(chat_id, '2')
+    newgroup_command(chat_id, 'end')
+
+    # Check bot and database calls
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_created'].format('casa'))
+    DatabaseConnection().delete_group.assert_called_with(chat_id=chat_id, name='casa')
+    DatabaseConnection().create_group.assert_called_with(chat_id=chat_id, name='casa', stations=[1, 2])
+    commands_get_bot().send_message.assert_called_once()
+
+
+@mock.patch('bicingbot.groups.DatabaseConnection')
+@mock.patch('bicingbot.groups.get_bot')
+def test_newgroup_command_newgroup_existing_name_cancel(get_bot, DatabaseConnection):
+    get_bot.return_value = mock.MagicMock()
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_group.return_value = {'chat_id': 333, 'name': 'test_group', 'stations': [1, 2, 3]}
+    del_group_status(chat_id)
+
+    newgroup_command(chat_id, 'newgroup')
+
+    # Check warning message is sent
+    newgroup_command(chat_id, 'casa')
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_name_already_existing'])
+    assert GROUPS_CACHE[chat_id]['status'] == 2
+
+    newgroup_command(chat_id, 'end')
+
+    # Check bot and database calls
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_not_created'])
+    DatabaseConnection().create_group.assert_not_called()
 
 
 def test_is_valid_group_name():

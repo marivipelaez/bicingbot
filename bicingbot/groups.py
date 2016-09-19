@@ -83,19 +83,23 @@ def newgroup_command(chat_id, text):
         if not is_valid_group_name(text):
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
         else:
-            # TODO: check existing group names
+            message_key = 'newgroup_stations'
+            if DatabaseConnection().get_group(chat_id, text):
+                message_key = 'newgroup_name_already_existing'
             GROUPS_CACHE[chat_id]['name'] = text
-            get_bot().send_message(chat_id=chat_id, text=tr('newgroup_stations', chat_id))
+            get_bot().send_message(chat_id=chat_id, text=tr(message_key, chat_id))
             set_group_status(chat_id, 2)
     elif group_status == 2:
         if text in COMMANDS_ALIAS['end']:
-            # TODO allow group modification
-            # TODO not to create a new group without stations
-            DatabaseConnection().create_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'],
-                                              stations=GROUPS_CACHE[chat_id]['stations'])
-            get_bot().send_message(chat_id=chat_id,
-                                   text=tr('newgroup_created', chat_id).format(GROUPS_CACHE[chat_id]['name']))
-            send_stations_status(chat_id, GROUPS_CACHE[chat_id]['stations'])
+            if GROUPS_CACHE[chat_id]['stations']:
+                DatabaseConnection().delete_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'])
+                DatabaseConnection().create_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'],
+                                                  stations=GROUPS_CACHE[chat_id]['stations'])
+                get_bot().send_message(chat_id=chat_id,
+                                       text=tr('newgroup_created', chat_id).format(GROUPS_CACHE[chat_id]['name']))
+                send_stations_status(chat_id, GROUPS_CACHE[chat_id]['stations'])
+            else:
+                get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
             del_group_status(chat_id)
         else:
             # TODO: check integer stations
