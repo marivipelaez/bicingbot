@@ -28,7 +28,7 @@ chat_id = '333'
 
 
 # 'casa': [153, 154, 339, 165, 166]
-# 'trabajo': [168, 160, 158, 159, 157]
+# 'trabajo': [168, 160, 158, 159, 157, 35]
 
 
 @mock.patch('bicingbot.commands.newgroup_command')
