@@ -75,7 +75,8 @@ class DatabaseConnection(object):
         """
         cursor = self.connection.cursor()
         stations = []
-        for row in cursor.execute('SELECT station_id FROM groups WHERE chat_id=? AND name=?', (chat_id, name)):
+        for row in cursor.execute('SELECT station_id FROM groups WHERE chat_id=? AND name=? ORDER BY rowid',
+                                  (chat_id, name)):
             stations.append(row[0])
         if stations:
             return {'chat_id': chat_id, 'name': name, 'stations': stations}

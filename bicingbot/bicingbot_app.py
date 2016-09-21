@@ -38,6 +38,8 @@ global logger
 logger = logging.getLogger(__name__)
 logger.info('Starting BicingBot server')
 
+#TODO: add bicingbot icon
+
 
 @app.route('/')
 def bicingbot_help():

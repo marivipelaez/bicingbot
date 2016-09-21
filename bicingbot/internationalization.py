@@ -40,8 +40,8 @@ STRINGS['es'] = {
     'newgroup_name': 'Envíame el nombre del nuevo grupo de estaciones',
     'newgroup_stations': 'Envíame el número de cada estación del grupo. Cuando termines envía /fin',
     'newgroup_created': 'Tu nuevo grupo /{} está listo',
-    'newgroup_name_format_error': ('Lo siento, ese nombre no es válido. No puede ser un número, '
-                                   'ni contener espacios o /,ni llamarse igual que alguno de mis comandos'),
+    'newgroup_name_format_error': ('Lo siento, ese nombre no es válido. No puede ser ni un número, '
+                                   'ni contener espacios ni /, ni llamarse igual que ninguno de mis comandos'),
     'newgroup_name_already_existing': ('Ya tienes un grupo con ese nombre. Para no sobreescribirlo, envía /fin. '
                                        'Si quieres continuar, envíame el número de cada estación del grupo y cuando '
                                        'termines envía /fin'),

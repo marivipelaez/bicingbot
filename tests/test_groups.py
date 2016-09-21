@@ -127,7 +127,7 @@ def test_newgroup_command_newgroup_existing_name_overwrite(get_bot, DatabaseConn
 def test_newgroup_command_newgroup_existing_name_cancel(get_bot, DatabaseConnection):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_group.return_value = {'chat_id': 333, 'name': 'test_group', 'stations': [1, 2, 3]}
+    DatabaseConnection().get_group.return_value = {'chat_id': 333, 'name': 'casa', 'stations': [1, 2, 3]}
     del_group_status(chat_id)
 
     newgroup_command(chat_id, 'newgroup')
