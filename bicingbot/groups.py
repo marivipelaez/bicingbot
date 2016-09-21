@@ -84,11 +84,11 @@ def newgroup_command(chat_id, text):
         if not is_valid_group_name(text):
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
         else:
-            message_key = 'newgroup_stations'
+            message = tr('newgroup_stations', chat_id)
             if DatabaseConnection().get_group(chat_id, text):
-                message_key = 'newgroup_name_already_existing'
+                message = tr('newgroup_name_already_existing', chat_id).format(message.lower())
             GROUPS_CACHE[chat_id]['name'] = text
-            get_bot().send_message(chat_id=chat_id, text=tr(message_key, chat_id))
+            get_bot().send_message(chat_id=chat_id, text=message)
             set_group_status(chat_id, 2)
     elif group_status == 2:
         if text in COMMANDS_ALIAS['end']:
@@ -100,7 +100,11 @@ def newgroup_command(chat_id, text):
                                        text=tr('newgroup_created', chat_id).format(GROUPS_CACHE[chat_id]['name']))
                 send_stations_status(chat_id, GROUPS_CACHE[chat_id]['stations'])
             else:
-                get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
+                if DatabaseConnection().get_group(chat_id, GROUPS_CACHE[chat_id]['name']):
+                    get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_overwrite', chat_id).format(
+                            GROUPS_CACHE[chat_id]['name']))
+                else:
+                    get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
             del_group_status(chat_id)
         elif is_integer(text):
             # TODO: check number of stations

@@ -38,7 +38,10 @@ global logger
 logger = logging.getLogger(__name__)
 logger.info('Starting BicingBot server')
 
-#TODO: add bicingbot icon
+# TODO: add bicingbot icon and description
+# TODO: remove groups after uninstalling bicingbot
+# TODO: add buttons
+# TODO: review bot configuration commands
 
 
 @app.route('/')
