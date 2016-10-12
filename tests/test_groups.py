@@ -32,7 +32,7 @@ chat_id = '333'
 def test_newgroup_command(get_bot, DatabaseConnection, commands_get_bot):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_group.return_value = None
+    DatabaseConnection().get_groups_names.return_value = []
     commands_get_bot.return_value = mock.MagicMock()
     del_group_status(chat_id)
 
@@ -100,7 +100,8 @@ def test_newgroup_command_bad_formatted_name(get_bot, DatabaseConnection, comman
 def test_newgroup_command_existing_name_overwrite(get_bot, DatabaseConnection, commands_get_bot):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_group.return_value = {'chat_id': 333, 'name': 'test_group', 'stations': [1, 2, 3]}
+    DatabaseConnection().get_groups_names.return_value = ['casa']
+    DatabaseConnection().get_group.return_value = {'chat_id': 333, 'name': 'casa', 'stations': [1, 2, 3]}
     commands_get_bot.return_value = mock.MagicMock()
     del_group_status(chat_id)
 
@@ -128,6 +129,7 @@ def test_newgroup_command_existing_name_overwrite(get_bot, DatabaseConnection, c
 def test_newgroup_command_existing_name_cancel(get_bot, DatabaseConnection):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_groups_names.return_value = ['casa']
     DatabaseConnection().get_group.return_value = {'chat_id': 333, 'name': 'casa', 'stations': [1, 2, 3]}
     del_group_status(chat_id)
 
@@ -153,7 +155,7 @@ def test_newgroup_command_existing_name_cancel(get_bot, DatabaseConnection):
 def test_newgroup_command_wrong_station(get_bot, DatabaseConnection, commands_get_bot):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_group.return_value = None
+    DatabaseConnection().get_groups_names.return_value = []
     commands_get_bot.return_value = mock.MagicMock()
     del_group_status(chat_id)
 
@@ -184,7 +186,7 @@ def test_newgroup_command_wrong_station(get_bot, DatabaseConnection, commands_ge
 def test_newgroup_command_no_stations(get_bot, DatabaseConnection, commands_get_bot):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_group.return_value = None
+    DatabaseConnection().get_groups_names.return_value = []
     commands_get_bot.return_value = mock.MagicMock()
     del_group_status(chat_id)
 

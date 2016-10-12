@@ -90,6 +90,5 @@ def tr(string_id, chat_id):
     :param string_id: string id
     :return: localized string value
     """
-    # TODO: get chat_id language
     language = DEFAULT_LANGUAGE
     return STRINGS[language][string_id]

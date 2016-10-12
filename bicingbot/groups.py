@@ -85,7 +85,7 @@ def newgroup_command(chat_id, text):
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
         else:
             message = tr('newgroup_stations', chat_id)
-            if DatabaseConnection().get_group(chat_id, text):
+            if text in DatabaseConnection().get_groups_names(chat_id):
                 message = tr('newgroup_name_already_existing', chat_id).format(message.lower())
             GROUPS_CACHE[chat_id]['name'] = text
             get_bot().send_message(chat_id=chat_id, text=message)
@@ -100,7 +100,7 @@ def newgroup_command(chat_id, text):
                                        text=tr('newgroup_created', chat_id).format(GROUPS_CACHE[chat_id]['name']))
                 send_stations_status(chat_id, GROUPS_CACHE[chat_id]['stations'])
             else:
-                if DatabaseConnection().get_group(chat_id, GROUPS_CACHE[chat_id]['name']):
+                if GROUPS_CACHE[chat_id]['name'] in DatabaseConnection().get_groups_names(chat_id):
                     get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_overwrite', chat_id).format(
                             GROUPS_CACHE[chat_id]['name']))
                 else:
@@ -120,7 +120,7 @@ def is_valid_group_name(text):
     :param text: string to validate
     :return: True if the text is a valid group name, False otherwise
     """
-    # TODO validate with regex
+    # TODO validate with regex (w,d,-,_,<21) + commands + not_integer
     from bicingbot.commands import COMMANDS
     is_valid = '/' not in text and ' ' not in text
     is_valid = is_valid and len(text) < 21

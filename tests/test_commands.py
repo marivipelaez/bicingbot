@@ -45,14 +45,11 @@ def test_bicingbot_command_newgroup(newgroup_command):
     del groups.GROUPS_CACHE[chat_id]
 
 
-@mock.patch('bicingbot.commands.DatabaseConnection')
 @mock.patch('bicingbot.commands.Bicing')
 @mock.patch('bicingbot.commands.get_bot')
-def test_bicingbot_command_station(get_bot, Bicing, DatabaseConnection):
+def test_bicingbot_command_station(get_bot, Bicing):
     get_bot.return_value = mock.MagicMock()
     Bicing.return_value = mock.MagicMock()
-    DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_group.return_value = None
 
     bicingbot_commands(chat_id, '155')
 
@@ -73,6 +70,7 @@ def test_bicingbot_command_group(get_bot, Bicing, DatabaseConnection):
     get_bot.return_value = mock.MagicMock()
     Bicing.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_groups_names.return_value = ['casa']
     DatabaseConnection().get_group.return_value = {'chat_id': chat_id,
                                                    'name': 'casa',
                                                    'stations': [153, 154, 339, 165, 166]}
@@ -96,7 +94,7 @@ def test_bicingbot_command_unknown(get_bot, Bicing, DatabaseConnection):
     get_bot.return_value = mock.MagicMock()
     Bicing.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_group.return_value = None
+    DatabaseConnection().get_groups_names.return_value = []
 
     bicingbot_commands(chat_id, 'unknown')
 
