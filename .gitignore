@@ -6,3 +6,4 @@ __pycache__
 *.log.*
 conf/token
 local_*
+*.db

@@ -23,13 +23,13 @@ import logging
 from telegram.emoji import Emoji
 
 from bicingbot.bicing import Bicing, StationNotFoundError
+from bicingbot.database_conn import DatabaseConnection
+from bicingbot.groups import get_group_status, newgroup_command
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
+from bicingbot.utils import pad_number, compact_address, normalize_command_name, is_integer
 
 logger = logging.getLogger(__name__)
-
-# Temporal hardcoded station groups
-STATIONS = {'casa': [153, 154, 339, 165, 166], 'trabajo': [168, 160, 158, 159, 157]}
 
 
 def start_command(chat_id, text):
@@ -64,25 +64,60 @@ def settings_command(chat_id, text):
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
 
 
-def stations_command(chat_id, text):
+COMMANDS_METHODS = {
+    'start': start_command,
+    'help': help_command,
+    'ayuda': help_command,
+    'settings': settings_command
+}
+
+COMMANDS_ALIAS = {
+    'start': ['start'],
+    'help': ['help', 'ayuda'],
+    'settings': ['settings'],
+    'newgroup': ['newgroup', 'nuevogrupo'],
+    'end': ['end', 'fin']
+}
+
+COMMANDS = [value for values in COMMANDS_ALIAS.values() for value in values]
+
+
+def bicingbot_commands(chat_id, text):
     """
-    Requests the status of a station or a group of stations and sends this message to the user
+    Handles bicingbot specific commands and sends the corresponding messages to the user
 
     :param chat_id: Telegram chat id
-    :param text: station id or group name
+    :param text: command to be executed
     """
-    try:
-        stations = STATIONS[text.lower()]
-        logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
-    except KeyError:
-        try:
-            stations = [int(text)]
-            logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
-        except Exception:
-            stations = []
-            logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
-            get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+    text = normalize_command_name(text)
 
+    if text in COMMANDS_METHODS.keys():
+        return COMMANDS_METHODS[text](chat_id, text)
+
+    if get_group_status(chat_id) > 0 or text in COMMANDS_ALIAS['newgroup']:
+        return newgroup_command(chat_id, text)
+
+    # Check if message is an existing group
+    group = DatabaseConnection().get_group(chat_id, text)
+    if group:
+        logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
+        send_stations_status(chat_id, group['stations'])
+    elif is_integer(text):
+        logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
+        send_stations_status(chat_id, [int(text)])
+    else:
+        logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
+        get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+    # TODO: add groups command
+
+
+def send_stations_status(chat_id, stations):
+    """
+    Sends the status of the given stations to the user
+
+    :param chat_id: Telegram chat id
+    :param stations: list of stations identifiers
+    """
     stations_status = []
     for station_id in stations:
         try:
@@ -111,30 +146,3 @@ def prepare_stations_status_response(stations):
                                                         station['id'], compact_address(station['streetName']),
                                                         station['streetNumber']))
     return '\n'.join(messages)
-
-
-def pad_number(num):
-    """
-    If given number has only one digit, a new string with two spaces in the left is returned. Otherwise, the same
-     string is returned.
-
-    :param num: string with an integer
-    :return: padded string
-    """
-    if int(num) < 10:
-        return '  ' + num
-    return num
-
-
-def compact_address(address):
-    """
-    Reduces address length to fit in the message
-
-    :param address: street name
-    :return: compacted street name
-    """
-    max_length = 14
-    stop_words = ['Carrer ', 'de ', 'del ']
-    for word in stop_words:
-        address = address.replace(word, '')
-    return address[:max_length]

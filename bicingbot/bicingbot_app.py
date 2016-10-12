@@ -24,27 +24,24 @@ import os
 import telegram
 from flask import Flask, request
 
-from bicingbot.commands import start_command, help_command, settings_command, stations_command
+from bicingbot.commands import bicingbot_commands
 from bicingbot.telegram_bot import get_bot
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Initialize logger
-app_path = os.path.dirname(os.path.realpath(__file__))
-output_log_filename = os.path.join(app_path, '..', 'bicingbot.log').replace('\\', '\\\\')
-config_path = os.path.join(app_path, '..', 'conf')
-logging.config.fileConfig(os.path.join(config_path, 'logging.conf'), {'logfilename': output_log_filename}, False)
+root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+output_log_filename = os.path.join(root_path, 'bicingbot.log').replace('\\', '\\\\')
+logging.config.fileConfig(os.path.join(root_path, 'conf', 'logging.conf'), {'logfilename': output_log_filename}, False)
 global logger
 logger = logging.getLogger(__name__)
 logger.info('Starting BicingBot server')
 
-# Telegram bots basic commands
-COMMANDS = {
-    '/start': start_command,
-    '/help': help_command,
-    '/settings': settings_command
-}
+# TODO: add bicingbot icon and description
+# TODO: remove groups after uninstalling bicingbot
+# TODO: add buttons
+# TODO: review bot configuration commands
 
 
 @app.route('/')
@@ -66,13 +63,10 @@ def webhook_handler():
     update = telegram.Update.de_json(request.get_json(force=True))
     chat_id = update.message.chat.id
     text = update.message.text
+    logger.debug("Received message '{}' from chat_id={}".format(text, chat_id))
 
-    # Checks and runs received command
-    try:
-        command_method = COMMANDS[text]
-    except KeyError:
-        command_method = stations_command
-    command_method(chat_id, text)
+    # Runs received command
+    bicingbot_commands(chat_id, text)
 
     return 'Handling your webhook'
 
@@ -84,6 +78,11 @@ def set_webhook():
 
     :return: HTTP_RESPONSE with 200 OK status and a status message.
     """
-    bot_response = get_bot().setWebhook('{}/bicingbot'.format(request.url_root))
-    logger.debug(bot_response)
-    return 'Webhook configured'
+    response = 'Webhook configured'
+    if request.url_root.startswith('https'):
+        bot_response = get_bot().setWebhook('{}/bicingbot'.format(request.url_root))
+        logger.debug(bot_response)
+    else:
+        response = 'Bad webhook: https url must be provided for webhook'
+        logger.warn(response)
+    return response
