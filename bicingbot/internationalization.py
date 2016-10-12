@@ -21,7 +21,7 @@ limitations under the License.
 STRINGS = dict()
 STRINGS['es'] = {
     'welcome': [
-        'Hola, soy BicingBot y te ayudo a obtener información de las estaciones del Bicing.',
+        'Hola, soy BicingBot y te ayudo a conocer el estado de las estaciones del Bicing.',
         ''
     ],
     'help': [
@@ -32,7 +32,7 @@ STRINGS['es'] = {
         ' NÚMERO_ESTACIÓN - muestra el estado de esa estación',
         ' /grupos - muestra el nombre de todos tus grupos',
     ],
-    'unknown_command': 'Lo siento, no te he entendido. Si necesitas ayuda envíame /help.',
+    'unknown_command': 'Lo siento, no te he entendido. Si necesitas ayuda envíame /ayuda.',
     'station_not_found': '[{}] estación no encontrada',
     'wrong_station': '[{}] ups, algo ha ido mal',
     'newgroup_name': 'Envíame el nombre de tu nuevo grupo',
@@ -51,7 +51,7 @@ STRINGS['es'] = {
 
 STRINGS['en'] = {
     'welcome': [
-        "Hi, I'm BicingBot and I'm here to help you getting information of Bicing stations.",
+        "Hi, I'm BicingBot and I'm here to help you to know the status of Bicing stations.",
         ''
     ],
     'help': [
