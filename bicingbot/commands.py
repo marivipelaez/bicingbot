@@ -24,7 +24,7 @@ from telegram.emoji import Emoji
 
 from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
-from bicingbot.groups import get_group_status, newgroup_command
+from bicingbot.groups import get_group_status, newgroup_command, groups_command
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
 from bicingbot.utils import pad_number, compact_address, normalize_command_name, is_integer
@@ -68,7 +68,8 @@ COMMANDS_METHODS = {
     'start': start_command,
     'help': help_command,
     'ayuda': help_command,
-    'settings': settings_command
+    'settings': settings_command,
+    'groups': groups_command
 }
 
 COMMANDS_ALIAS = {
@@ -76,6 +77,7 @@ COMMANDS_ALIAS = {
     'help': ['help', 'ayuda'],
     'settings': ['settings'],
     'newgroup': ['newgroup', 'nuevogrupo'],
+    'groups': ['groups', 'grupos'],
     'end': ['end', 'fin']
 }
 
@@ -108,7 +110,6 @@ def bicingbot_commands(chat_id, text):
     else:
         logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
         get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
-    # TODO: add groups command
 
 
 def send_stations_status(chat_id, stations):

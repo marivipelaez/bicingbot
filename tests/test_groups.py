@@ -20,7 +20,7 @@ limitations under the License.
 
 import mock
 
-from bicingbot.groups import newgroup_command, del_group_status, GROUPS_CACHE, is_valid_group_name
+from bicingbot.groups import newgroup_command, del_group_status, GROUPS_CACHE, is_valid_group_name, groups_command
 from bicingbot.internationalization import STRINGS
 
 chat_id = '333'
@@ -208,3 +208,28 @@ def test_is_valid_group_name():
     assert not is_valid_group_name('casacasacasacasacasac')
     assert not is_valid_group_name('settings')
     assert not is_valid_group_name('fin')
+
+
+@mock.patch('bicingbot.groups.DatabaseConnection')
+@mock.patch('bicingbot.groups.get_bot')
+def test_groups_command(get_bot, DatabaseConnection):
+    get_bot.return_value = mock.MagicMock()
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_groups_names.return_value = ['group1', 'group2']
+
+    groups_command(chat_id, '/grupos')
+
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text='/group1, /group2')
+
+
+@mock.patch('bicingbot.groups.DatabaseConnection')
+@mock.patch('bicingbot.groups.get_bot')
+def test_groups_command_empty(get_bot, DatabaseConnection):
+    get_bot.return_value = mock.MagicMock()
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_groups_names.return_value = []
+
+    groups_command(chat_id, '/grupos')
+
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['groups_empty'])
+

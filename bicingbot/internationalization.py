@@ -28,11 +28,9 @@ STRINGS['es'] = {
         'Estos son mis comandos:',
         ' /ayuda - muestra esta ayuda',
         ' /nuevogrupo - crea un grupo de estaciones',
-        ' NOMBRE_GRUPO - devuelve el estado de todas las estaciones del grupo',
-        ' NÚMERO_ESTACIÓN - devuelve el estado de esa estación',
-        '',
-        'Y dentro de poco espero entender también:',
-        ' /grupos - devuelve el nombre de todos tus grupos',
+        ' NOMBRE_GRUPO - muestra el estado de todas las estaciones del grupo',
+        ' NÚMERO_ESTACIÓN - muestra el estado de esa estación',
+        ' /grupos - muestra el nombre de todos tus grupos',
     ],
     'unknown_command': 'Lo siento, no te he entendido. Si necesitas ayuda envíame /help.',
     'station_not_found': '[{}] estación no encontrada',
@@ -47,7 +45,8 @@ STRINGS['es'] = {
     'newgroup_not_created': 'Como no has enviado ninguna estación, no he creado el grupo',
     'newgroup_not_overwrite': 'Vale, no modifico tu grupo /{}',
     'newgroup_unknown_command': ('Lo siento, no es un número de estación válido. Envíame un número correcto o /fin '
-                                 'para terminar')
+                                 'para terminar'),
+    'groups_empty': 'Aún no tienes grupos. Para crear uno, envíame /nuevogrupo.'
 }
 
 STRINGS['en'] = {
@@ -61,8 +60,6 @@ STRINGS['en'] = {
         ' /newgroup - creates a stations group',
         ' GROUP_NAME - shows the status of all the stations within this group',
         ' STATION_ID - shows the status of this station',
-        '',
-        'And in short I will understand also:',
         ' /groups - shows the name of all your groups',
     ],
     'unknown_command': "I'm sorry, I don't understand you. Send me /help to get my commands.",
@@ -78,7 +75,8 @@ STRINGS['en'] = {
     'newgroup_not_created': 'You sent me no stations, so I did not store the group',
     'newgroup_not_overwrite': "Okay, I don't modify your group /{}",
     'newgroup_unknown_command': ('So sorry, this is not a valid station number. Send me a valid number or /end to '
-                                 'finish')
+                                 'finish'),
+    'groups_empty': 'You have no groups yet. To create one, send me /newgroup.'
 }
 
 DEFAULT_LANGUAGE = 'es'

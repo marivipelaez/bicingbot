@@ -127,3 +127,18 @@ def is_valid_group_name(text):
     is_valid = is_valid and text not in COMMANDS
     is_valid = is_valid and not is_integer(text)
     return is_valid
+
+
+def groups_command(chat_id, text):
+    """
+    Sends a message to the user with the name of all her groups
+
+    :param chat_id: Telegram chat id
+    :param text: command name
+    """
+    logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
+    groups = DatabaseConnection().get_groups_names(chat_id)
+    if groups:
+        get_bot().send_message(chat_id=chat_id, text=', '.join(['/' + group for group in groups]))
+    else:
+        get_bot().send_message(chat_id=chat_id, text=tr('groups_empty', chat_id))
