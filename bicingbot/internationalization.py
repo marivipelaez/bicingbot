@@ -38,8 +38,9 @@ STRINGS['es'] = {
     'newgroup_name': 'Envíame el nombre de tu nuevo grupo',
     'newgroup_stations': 'Envíame cada número de estación en un mensaje y cuando termines, envía /fin',
     'newgroup_created': 'Tu nuevo grupo /{} está listo',
-    'newgroup_name_format_error': ('Lo siento, ese nombre no es válido. No puede ser ni un número, '
-                                   'ni contener espacios ni /, ni llamarse igual que ninguno de mis comandos'),
+    'newgroup_name_format_error': ('Lo siento, ese nombre no es válido. Puede contener letras, números, guiones bajos '
+                                   'y guiones, pero no puede ser un número, ni llamarse igual que ninguno de mis '
+                                   'comandos'),
     'newgroup_name_already_existing': ('Ya tienes un grupo con ese nombre\nSi quieres mantenerlo, envía /fin'
                                        '\nPara volver a crearlo, {}'),
     'newgroup_not_created': 'Como no has enviado ninguna estación, no he creado el grupo',
@@ -68,8 +69,8 @@ STRINGS['en'] = {
     'newgroup_name': 'Send me the name of your new group',
     'newgroup_stations': 'Send me each station number in a separated message and when you are done, send me /end',
     'newgroup_created': 'Your new group /{} is ready',
-    'newgroup_name_format_error': ('So sorry, but that name is not valid. It cannot be a number, '
-                                   'or contain blanks or /, or have the same value as any of my commands.'),
+    'newgroup_name_format_error': ('So sorry, but that name is not valid. It can contain letters, numbers, underscores '
+                                   'and dashes, but cannot be a number or have the same value as any of my commands.'),
     'newgroup_name_already_existing': ('You already have a group with that name\nTo keep it as it is, send me /end'
                                        '\nTo create it again, {}'),
     'newgroup_not_created': 'You sent me no stations, so I did not store the group',

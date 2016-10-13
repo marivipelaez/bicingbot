@@ -19,6 +19,7 @@ limitations under the License.
 """
 
 import logging
+import re
 
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.internationalization import tr
@@ -120,13 +121,8 @@ def is_valid_group_name(text):
     :param text: string to validate
     :return: True if the text is a valid group name, False otherwise
     """
-    # TODO validate with regex (w,d,-,_,<21) + commands + not_integer
     from bicingbot.commands import COMMANDS
-    is_valid = '/' not in text and ' ' not in text
-    is_valid = is_valid and len(text) < 21
-    is_valid = is_valid and text not in COMMANDS
-    is_valid = is_valid and not is_integer(text)
-    return is_valid
+    return re.match("^[\w\d_-]{1,20}$", text) and not is_integer(text) and text not in COMMANDS
 
 
 def groups_command(chat_id, text):

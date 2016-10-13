@@ -202,14 +202,19 @@ def test_newgroup_command_no_stations(get_bot, DatabaseConnection, commands_get_
 def test_is_valid_group_name():
     assert is_valid_group_name('casa')
     assert is_valid_group_name('casacasacasacasacasa')
-    assert is_valid_group_name('0.5')
+    assert is_valid_group_name('casa_casa')
+    assert is_valid_group_name('casa-casa')
+    assert is_valid_group_name('casa10')
     assert not is_valid_group_name('1')
     assert not is_valid_group_name('/14')
-    assert not is_valid_group_name('casa/paco')
-    assert not is_valid_group_name('casa paco')
+    assert not is_valid_group_name('casa/casa')
+    assert not is_valid_group_name('casa casa')
     assert not is_valid_group_name('casacasacasacasacasac')
     assert not is_valid_group_name('settings')
     assert not is_valid_group_name('fin')
+    assert not is_valid_group_name('casa\casa')
+    assert not is_valid_group_name('casa*')
+    assert not is_valid_group_name('casa.casa')
 
 
 @mock.patch('bicingbot.groups.DatabaseConnection')
