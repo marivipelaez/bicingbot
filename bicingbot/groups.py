@@ -29,6 +29,8 @@ from bicingbot.utils import is_integer
 logger = logging.getLogger(__name__)
 
 GROUPS_CACHE = {}
+MAX_NUMBER_STATIONS = 20
+MAX_NUMBER_GROUPS = 100
 
 
 def get_group_status(chat_id):
@@ -78,9 +80,12 @@ def newgroup_command(chat_id, text):
     from bicingbot.commands import send_stations_status, COMMANDS_ALIAS
     if group_status == 0:
         logger.info('COMMAND /newgroup: chat_id={}'.format(chat_id))
-        get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name', chat_id))
-        set_group_status(chat_id, 1)
-        return
+        if len(DatabaseConnection().get_groups_names(chat_id)) < MAX_NUMBER_GROUPS:
+            get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name', chat_id))
+            set_group_status(chat_id, 1)
+        else:
+            get_bot().send_message(chat_id=chat_id,
+                                   text=tr('newgroup_number_groups_limit', chat_id).format(MAX_NUMBER_GROUPS))
     elif group_status == 1:
         if not is_valid_group_name(text):
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
@@ -108,8 +113,11 @@ def newgroup_command(chat_id, text):
                     get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
             del_group_status(chat_id)
         elif is_integer(text):
-            # TODO: check number of stations
-            GROUPS_CACHE[chat_id]['stations'].append(int(text))
+            if len(GROUPS_CACHE[chat_id]['stations']) < MAX_NUMBER_STATIONS:
+                GROUPS_CACHE[chat_id]['stations'].append(int(text))
+            else:
+                get_bot().send_message(chat_id=chat_id,
+                                       text=tr('newgroup_number_stations_limit', chat_id).format(MAX_NUMBER_STATIONS))
         else:
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_unknown_command', chat_id))
 

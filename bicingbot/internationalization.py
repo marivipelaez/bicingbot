@@ -47,6 +47,9 @@ STRINGS['es'] = {
     'newgroup_not_overwrite': 'Vale, no modifico tu grupo /{}',
     'newgroup_unknown_command': ('Lo siento, no es un número de estación válido. Envíame un número correcto o /fin '
                                  'para terminar'),
+    'newgroup_number_stations_limit': ('Lo siento, sólo puede haber {} estaciones dentro de un grupo. Envíame /fin '
+                                       'para terminar'),
+    'newgroup_number_groups_limit': 'Lo siento, ya tienes {} grupos y no puedes crear más',
     'groups_empty': 'Aún no tienes grupos. Para crear uno, envíame /nuevogrupo.'
 }
 
@@ -77,6 +80,8 @@ STRINGS['en'] = {
     'newgroup_not_overwrite': "Okay, I don't modify your group /{}",
     'newgroup_unknown_command': ('So sorry, this is not a valid station number. Send me a valid number or /end to '
                                  'finish'),
+    'newgroup_number_stations_limit': 'So sorry, a group only can contain {} stations. Send me /end to finish',
+    'newgroup_number_groups_limit': 'So sorry, you already have {} groups and you cannot create any more',
     'groups_empty': 'You have no groups yet. To create one, send me /newgroup.'
 }
 
