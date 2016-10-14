@@ -77,7 +77,7 @@ def newgroup_command(chat_id, text):
     :param text: group command
     """
     group_status = get_group_status(chat_id)
-    from bicingbot.commands import send_stations_status, COMMANDS_ALIAS
+    from bicingbot.commands import send_stations_status, COMMANDS
     if group_status == 0:
         logger.info('COMMAND /newgroup: chat_id={}'.format(chat_id))
         if len(DatabaseConnection().get_groups_names(chat_id)) < MAX_NUMBER_GROUPS:
@@ -97,7 +97,7 @@ def newgroup_command(chat_id, text):
             get_bot().send_message(chat_id=chat_id, text=message)
             set_group_status(chat_id, 2)
     elif group_status == 2:
-        if text in COMMANDS_ALIAS['end']:
+        if text in COMMANDS['end']['alias']:
             if GROUPS_CACHE[chat_id]['stations']:
                 DatabaseConnection().delete_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'])
                 DatabaseConnection().create_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'],
@@ -130,7 +130,8 @@ def is_valid_group_name(text):
     :return: True if the text is a valid group name, False otherwise
     """
     from bicingbot.commands import COMMANDS
-    return re.match("^[\w\d_-]{1,20}$", text) and not is_integer(text) and text not in COMMANDS
+    commands_alias = [value for values in COMMANDS.values() for value in values['alias']]
+    return re.match("^[\w\d_-]{1,20}$", text) and not is_integer(text) and text not in commands_alias
 
 
 def groups_command(chat_id, text):
