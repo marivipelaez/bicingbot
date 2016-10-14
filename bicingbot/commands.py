@@ -64,24 +64,27 @@ def settings_command(chat_id, text):
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
 
 
-COMMANDS_METHODS = {
-    'start': start_command,
-    'help': help_command,
-    'ayuda': help_command,
-    'settings': settings_command,
-    'groups': groups_command
+COMMANDS = {
+    'start': {'alias': ['start'], 'method': start_command},
+    'help': {'alias': ['help', 'ayuda'], 'method': help_command},
+    'settings': {'alias': ['settings'], 'method': settings_command},
+    'newgroup': {'alias': ['newgroup', 'nuevogrupo'], 'method': newgroup_command},
+    'groups': {'alias': ['groups', 'grupos'], 'method': groups_command},
+    'end': {'alias': ['end', 'fin'], 'method': None}
 }
 
-COMMANDS_ALIAS = {
-    'start': ['start'],
-    'help': ['help', 'ayuda'],
-    'settings': ['settings'],
-    'newgroup': ['newgroup', 'nuevogrupo'],
-    'groups': ['groups', 'grupos'],
-    'end': ['end', 'fin']
-}
 
-COMMANDS = [value for values in COMMANDS_ALIAS.values() for value in values]
+def get_command_method(text):
+    """
+    If exists, retrieves the method to be executed for that command
+
+    :param text: command to be executed
+    :return: the method to be executed or None
+    """
+    for command in COMMANDS.values():
+        if text in command['alias']:
+            return command['method']
+    return None
 
 
 def bicingbot_commands(chat_id, text):
@@ -92,10 +95,10 @@ def bicingbot_commands(chat_id, text):
     :param text: command to be executed
     """
     text = normalize_command_name(text)
-
-    if text in COMMANDS_METHODS.keys():
-        COMMANDS_METHODS[text](chat_id, text)
-    elif text in COMMANDS_ALIAS['newgroup'] or get_group_status(chat_id) > 0:
+    command_method = get_command_method(text)
+    if command_method:
+        command_method(chat_id, text)
+    elif get_group_status(chat_id) > 0:
         newgroup_command(chat_id, text)
     elif is_integer(text):
         logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
