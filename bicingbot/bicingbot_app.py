@@ -38,23 +38,9 @@ global logger
 logger = logging.getLogger(__name__)
 logger.info('Starting BicingBot server')
 
-# TODO: add bicingbot icon and description
-# TODO: remove groups after uninstalling bicingbot
-# TODO: add buttons
-# TODO: review bot configuration commands
 
 
-@app.route('/')
-def bicingbot_help():
-    """
-    Welcome point to bicingbot.
-
-    :return: HTTP_RESPONSE with 200 OK status and a welcome message.
-    """
-    return 'Welcome to BicingBot!'
-
-
-@app.route('/bicingbot', methods=['GET', 'POST'])
+@app.route('/bicingbot', methods=['POST'])
 def webhook_handler():
     """
     Handles requests from BicingBot users.
@@ -68,7 +54,7 @@ def webhook_handler():
     # Runs received command
     bicingbot_commands(chat_id, text)
 
-    return 'Handling your webhook'
+    return ''
 
 
 @app.route('/setwebhook')

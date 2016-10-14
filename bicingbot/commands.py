@@ -94,19 +94,16 @@ def bicingbot_commands(chat_id, text):
     text = normalize_command_name(text)
 
     if text in COMMANDS_METHODS.keys():
-        return COMMANDS_METHODS[text](chat_id, text)
-
-    if get_group_status(chat_id) > 0 or text in COMMANDS_ALIAS['newgroup']:
-        return newgroup_command(chat_id, text)
-
-    # Check if message is an existing group
-    group = DatabaseConnection().get_group(chat_id, text)
-    if group:
-        logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
-        send_stations_status(chat_id, group['stations'])
+        COMMANDS_METHODS[text](chat_id, text)
+    elif text in COMMANDS_ALIAS['newgroup'] or get_group_status(chat_id) > 0:
+        newgroup_command(chat_id, text)
     elif is_integer(text):
         logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
         send_stations_status(chat_id, [int(text)])
+    elif text in DatabaseConnection().get_groups_names(chat_id):
+        logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
+        group = DatabaseConnection().get_group(chat_id, text)
+        send_stations_status(chat_id, group['stations'])
     else:
         logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
         get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))

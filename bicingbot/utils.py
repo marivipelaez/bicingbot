@@ -18,6 +18,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import re
+
 
 def normalize_command_name(text):
     """
@@ -62,8 +64,4 @@ def is_integer(text):
     :param text: string to validate
     :return: True if the text is an integer, False otherwise
     """
-    try:
-        int(text)
-        return True
-    except ValueError:
-        return False
+    return re.match("^[\d]+$", text)

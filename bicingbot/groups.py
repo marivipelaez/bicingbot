@@ -19,6 +19,7 @@ limitations under the License.
 """
 
 import logging
+import re
 
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.internationalization import tr
@@ -28,6 +29,8 @@ from bicingbot.utils import is_integer
 logger = logging.getLogger(__name__)
 
 GROUPS_CACHE = {}
+MAX_NUMBER_STATIONS = 20
+MAX_NUMBER_GROUPS = 100
 
 
 def get_group_status(chat_id):
@@ -77,15 +80,18 @@ def newgroup_command(chat_id, text):
     from bicingbot.commands import send_stations_status, COMMANDS_ALIAS
     if group_status == 0:
         logger.info('COMMAND /newgroup: chat_id={}'.format(chat_id))
-        get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name', chat_id))
-        set_group_status(chat_id, 1)
-        return
+        if len(DatabaseConnection().get_groups_names(chat_id)) < MAX_NUMBER_GROUPS:
+            get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name', chat_id))
+            set_group_status(chat_id, 1)
+        else:
+            get_bot().send_message(chat_id=chat_id,
+                                   text=tr('newgroup_number_groups_limit', chat_id).format(MAX_NUMBER_GROUPS))
     elif group_status == 1:
         if not is_valid_group_name(text):
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
         else:
             message = tr('newgroup_stations', chat_id)
-            if DatabaseConnection().get_group(chat_id, text):
+            if text in DatabaseConnection().get_groups_names(chat_id):
                 message = tr('newgroup_name_already_existing', chat_id).format(message.lower())
             GROUPS_CACHE[chat_id]['name'] = text
             get_bot().send_message(chat_id=chat_id, text=message)
@@ -100,15 +106,18 @@ def newgroup_command(chat_id, text):
                                        text=tr('newgroup_created', chat_id).format(GROUPS_CACHE[chat_id]['name']))
                 send_stations_status(chat_id, GROUPS_CACHE[chat_id]['stations'])
             else:
-                if DatabaseConnection().get_group(chat_id, GROUPS_CACHE[chat_id]['name']):
+                if GROUPS_CACHE[chat_id]['name'] in DatabaseConnection().get_groups_names(chat_id):
                     get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_overwrite', chat_id).format(
                             GROUPS_CACHE[chat_id]['name']))
                 else:
                     get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
             del_group_status(chat_id)
         elif is_integer(text):
-            # TODO: check number of stations
-            GROUPS_CACHE[chat_id]['stations'].append(int(text))
+            if len(GROUPS_CACHE[chat_id]['stations']) < MAX_NUMBER_STATIONS:
+                GROUPS_CACHE[chat_id]['stations'].append(int(text))
+            else:
+                get_bot().send_message(chat_id=chat_id,
+                                       text=tr('newgroup_number_stations_limit', chat_id).format(MAX_NUMBER_STATIONS))
         else:
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_unknown_command', chat_id))
 
@@ -120,13 +129,8 @@ def is_valid_group_name(text):
     :param text: string to validate
     :return: True if the text is a valid group name, False otherwise
     """
-    # TODO validate with regex
     from bicingbot.commands import COMMANDS
-    is_valid = '/' not in text and ' ' not in text
-    is_valid = is_valid and len(text) < 21
-    is_valid = is_valid and text not in COMMANDS
-    is_valid = is_valid and not is_integer(text)
-    return is_valid
+    return re.match("^[\w\d_-]{1,20}$", text) and not is_integer(text) and text not in COMMANDS
 
 
 def groups_command(chat_id, text):
