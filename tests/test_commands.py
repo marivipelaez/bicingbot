@@ -21,24 +21,32 @@ limitations under the License.
 import mock
 
 from bicingbot import groups
-from bicingbot.commands import bicingbot_commands
+from bicingbot.commands import bicingbot_commands, COMMANDS
 from bicingbot.internationalization import STRINGS
 
 chat_id = '333'
 
 
-# 'casa': [153, 154, 339, 165, 166]
-# 'trabajo': [168, 160, 158, 159, 157, 35]
+def test_bicingbot_command_language():
+    COMMANDS['language']['method'] = mock.MagicMock()
+    bicingbot_commands(chat_id, 'language')
+    COMMANDS['language']['method'].assert_called_with(chat_id, 'language')
 
 
-@mock.patch('bicingbot.commands.newgroup_command')
-def test_bicingbot_command_newgroup(newgroup_command):
+def test_bicingbot_command_groups():
+    COMMANDS['groups']['method'] = mock.MagicMock()
+    bicingbot_commands(chat_id, 'groups')
+    COMMANDS['groups']['method'].assert_called_with(chat_id, 'groups')
+
+
+def test_bicingbot_command_newgroup():
+    COMMANDS['newgroup']['method'] = mock.MagicMock()
     bicingbot_commands(chat_id, 'newgroup')
-    newgroup_command.assert_called_with(chat_id, 'newgroup')
+    COMMANDS['newgroup']['method'].assert_called_with(chat_id, 'newgroup')
 
 
 @mock.patch('bicingbot.commands.newgroup_command')
-def test_bicingbot_command_newgroup(newgroup_command):
+def test_bicingbot_command_newgroup_name(newgroup_command):
     groups.GROUPS_CACHE[chat_id] = {'status': 1, 'name': None, 'stations': []}
     bicingbot_commands(chat_id, 'casa')
     newgroup_command.assert_called_with(chat_id, 'casa')

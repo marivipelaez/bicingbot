@@ -18,12 +18,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from bicingbot.internationalization import tr, STRINGS, get_languages
+import mock
+
+from bicingbot.internationalization import STRINGS
+from bicingbot.language import language_command
+
+chat_id = '333'
 
 
-def test_translate_default_language():
-    assert tr('wrong_station', None) == STRINGS['es']['wrong_station']
+@mock.patch('bicingbot.language.get_bot')
+def test_language_command(get_bot):
+    get_bot.return_value = mock.MagicMock()
 
+    language_command(chat_id, 'language')
 
-def test_get_languages():
-    assert get_languages() == ['en', 'es']
+    # Check bot calls and temporal cache
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['language_choose'])

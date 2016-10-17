@@ -26,6 +26,7 @@ from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.groups import get_group_status, newgroup_command, groups_command
 from bicingbot.internationalization import tr
+from bicingbot.language import language_command
 from bicingbot.telegram_bot import get_bot
 from bicingbot.utils import pad_number, compact_address, normalize_command_name, is_integer
 
@@ -68,6 +69,7 @@ COMMANDS = {
     'start': {'alias': ['start'], 'method': start_command},
     'help': {'alias': ['help', 'ayuda'], 'method': help_command},
     'settings': {'alias': ['settings'], 'method': settings_command},
+    'language': {'alias': ['language', 'idioma'], 'method': language_command},
     'newgroup': {'alias': ['newgroup', 'nuevogrupo'], 'method': newgroup_command},
     'groups': {'alias': ['groups', 'grupos'], 'method': groups_command},
     'end': {'alias': ['end', 'fin'], 'method': None}

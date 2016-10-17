@@ -18,12 +18,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from bicingbot.internationalization import tr, STRINGS, get_languages
+import logging
+from bicingbot.internationalization import tr, get_languages
+from bicingbot.telegram_bot import get_bot
+
+logger = logging.getLogger(__name__)
 
 
-def test_translate_default_language():
-    assert tr('wrong_station', None) == STRINGS['es']['wrong_station']
+def language_command(chat_id, text):
+    """
+    Update user language
 
-
-def test_get_languages():
-    assert get_languages() == ['en', 'es']
+    :param chat_id: Telegram chat id
+    :param text: command name
+    """
+    logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
+    # languages = get_languages()
+    get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id))

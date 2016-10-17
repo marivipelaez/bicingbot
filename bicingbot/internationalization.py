@@ -32,6 +32,7 @@ STRINGS['es'] = {
         ' NÚMERO_ESTACIÓN - muestra el estado de esa estación',
         ' /grupos - muestra el nombre de todos tus grupos',
     ],
+    'language_choose': 'Elige tu idioma',
     'unknown_command': 'Lo siento, no te he entendido. Si necesitas ayuda envíame /ayuda.',
     'station_not_found': '[{}] estación no encontrada',
     'wrong_station': '[{}] ups, algo ha ido mal',
@@ -66,6 +67,7 @@ STRINGS['en'] = {
         ' STATION_ID - shows the status of this station',
         ' /groups - shows the name of all your groups',
     ],
+    'language_choose': 'Choose your language',
     'unknown_command': "I'm sorry, I don't understand you. Send me /help to get my commands.",
     'station_not_found': '[{}] station not found',
     'wrong_station': '[{}] oops, something went wrong',
@@ -98,3 +100,12 @@ def tr(string_id, chat_id):
     """
     language = DEFAULT_LANGUAGE
     return STRINGS[language][string_id]
+
+
+def get_languages():
+    """
+    Get valid bot languages
+
+    :return: list of languages
+    """
+    return STRINGS.keys()
