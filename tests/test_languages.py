@@ -33,4 +33,4 @@ def test_language_command(get_bot):
     language_command(chat_id, 'language')
 
     # Check bot calls and temporal cache
-    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['language_choose'])
+    get_bot().send_message.assert_called_once()

@@ -21,6 +21,7 @@ limitations under the License.
 import logging
 from bicingbot.internationalization import tr, get_languages
 from bicingbot.telegram_bot import get_bot
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 logger = logging.getLogger(__name__)
 
@@ -33,5 +34,9 @@ def language_command(chat_id, text):
     :param text: command name
     """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
-    # languages = get_languages()
-    get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id))
+    #keyboard = ReplyKeyboardMarkup(get_languages(), one_time_keyboard=True)
+    #get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id), reply_markup=keyboard)
+    buttons = [[InlineKeyboardButton(lang, callback_data=lang) for lang in get_languages()]]
+    keyboard = InlineKeyboardMarkup(buttons)
+    get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id), reply_markup=keyboard)
+    #get_bot().answerInlineQuery

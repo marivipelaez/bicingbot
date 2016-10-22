@@ -32,6 +32,7 @@ STRINGS['es'] = {
         ' NÚMERO_ESTACIÓN - muestra el estado de esa estación',
         ' /grupos - muestra el nombre de todos tus grupos',
     ],
+    'language': 'Español',
     'language_choose': 'Elige tu idioma',
     'unknown_command': 'Lo siento, no te he entendido. Si necesitas ayuda envíame /ayuda.',
     'station_not_found': '[{}] estación no encontrada',
@@ -67,6 +68,7 @@ STRINGS['en'] = {
         ' STATION_ID - shows the status of this station',
         ' /groups - shows the name of all your groups',
     ],
+    'language': 'English',
     'language_choose': 'Choose your language',
     'unknown_command': "I'm sorry, I don't understand you. Send me /help to get my commands.",
     'station_not_found': '[{}] station not found',
@@ -108,4 +110,4 @@ def get_languages():
 
     :return: list of languages
     """
-    return STRINGS.keys()
+    return [v['language'] for v in STRINGS.values()]

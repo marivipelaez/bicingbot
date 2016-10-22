@@ -47,7 +47,10 @@ def webhook_handler():
     """
     # Reads request from Telegram user
     update = telegram.Update.de_json(request.get_json(force=True))
-    chat_id = update.message.chat.id
+    try:
+        chat_id = update.message.chat.id
+    except AttributeError:
+        logger.debug(update.callback_query)
     text = update.message.text
     logger.debug("Received message '{}' from chat_id={}".format(text, chat_id))
 
