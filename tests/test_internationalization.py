@@ -26,4 +26,4 @@ def test_translate_default_language():
 
 
 def test_get_languages():
-    assert get_languages() == ['English', 'Español']
+    assert get_languages() ==  {'en': 'English', 'es': 'Español'}

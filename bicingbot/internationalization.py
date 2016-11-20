@@ -34,6 +34,7 @@ STRINGS['es'] = {
     ],
     'language': 'Español',
     'language_choose': 'Elige tu idioma',
+    'language_updated': 'Has cambiado el idioma a Español',
     'unknown_command': 'Lo siento, no te he entendido. Si necesitas ayuda envíame /ayuda.',
     'station_not_found': '[{}] estación no encontrada',
     'wrong_station': '[{}] ups, algo ha ido mal',
@@ -70,6 +71,7 @@ STRINGS['en'] = {
     ],
     'language': 'English',
     'language_choose': 'Choose your language',
+    'language_updated': 'Your language is now English',
     'unknown_command': "I'm sorry, I don't understand you. Send me /help to get my commands.",
     'station_not_found': '[{}] station not found',
     'wrong_station': '[{}] oops, something went wrong',
@@ -100,6 +102,7 @@ def tr(string_id, chat_id):
     :param string_id: string id
     :return: localized string value
     """
+    # TODO: get language from database
     language = DEFAULT_LANGUAGE
     return STRINGS[language][string_id]
 
@@ -108,6 +111,6 @@ def get_languages():
     """
     Get valid bot languages
 
-    :return: list of languages
+    :return: dict with languages
     """
-    return [v['language'] for v in STRINGS.values()]
+    return {language_key: values['language'] for language_key, values in STRINGS.items()}

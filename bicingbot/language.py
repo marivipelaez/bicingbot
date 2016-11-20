@@ -19,24 +19,38 @@ limitations under the License.
 """
 
 import logging
+
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+
 from bicingbot.internationalization import tr, get_languages
 from bicingbot.telegram_bot import get_bot
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 logger = logging.getLogger(__name__)
 
 
 def language_command(chat_id, text):
     """
-    Update user language
+    Sends language options
 
     :param chat_id: Telegram chat id
     :param text: command name
     """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
-    #keyboard = ReplyKeyboardMarkup(get_languages(), one_time_keyboard=True)
-    #get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id), reply_markup=keyboard)
-    buttons = [[InlineKeyboardButton(lang, callback_data=lang) for lang in get_languages()]]
+    buttons = [
+        [InlineKeyboardButton(lang_value, callback_data=lang_key) for lang_key, lang_value in get_languages().items()]]
     keyboard = InlineKeyboardMarkup(buttons)
     get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id), reply_markup=keyboard)
-    #get_bot().answerInlineQuery
+
+
+def update_language(chat_id, callback_query_id, data):
+    """
+    Updates user language and sends a confirmation notification
+
+    :param chat_id: Telegram chat id
+    :param callback_query_id: unique callback query id
+    :param data: callback query response
+    """
+    languages = get_languages()
+    if data in languages.keys():
+        # TODO: update language in database
+        get_bot().answer_callback_query(callback_query_id, text=tr('language_updated', chat_id).format(languages[data]))

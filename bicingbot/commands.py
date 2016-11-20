@@ -26,7 +26,7 @@ from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.groups import get_group_status, newgroup_command, groups_command
 from bicingbot.internationalization import tr
-from bicingbot.language import language_command
+from bicingbot.language import language_command, update_language
 from bicingbot.telegram_bot import get_bot
 from bicingbot.utils import pad_number, compact_address, normalize_command_name, is_integer
 
@@ -149,3 +149,14 @@ def prepare_stations_status_response(stations):
                                                         station['id'], compact_address(station['streetName']),
                                                         station['streetNumber']))
     return '\n'.join(messages)
+
+
+def bicingbot_callback_response(chat_id, callback_query_id, data):
+    """
+    Handles bicingbot callback query responses and sends the corresponding messages to the user
+
+    :param chat_id: Telegram chat id
+    :param callback_query_id: unique callback query id
+    :param data: callback query response
+    """
+    update_language(chat_id, callback_query_id, data)
