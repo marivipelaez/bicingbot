@@ -101,3 +101,35 @@ def test_delete_group(database_connection, check_connection):
 
 def test_delete_group_nonexisting(database_connection):
     database_connection.delete_group(1, 'test_group')
+
+
+def test_add_setting(database_connection, check_connection):
+    database_connection.add_setting(chat_id=1, setting='language', value='es')
+
+    cursor = check_connection.connection.cursor()
+    rows = cursor.execute('SELECT * FROM settings where chat_id=1').fetchall()
+    assert len(rows) == 1
+    assert rows[0][:3] == (1, 'language', 'es')
+
+
+def test_add_setting_existent(database_connection, check_connection):
+    database_connection.add_setting(chat_id=1, setting='language', value='es')
+    database_connection.add_setting(chat_id=1, setting='language', value='en')
+
+    cursor = check_connection.connection.cursor()
+    rows = cursor.execute('SELECT * FROM settings where chat_id=1').fetchall()
+    assert len(rows) == 1
+    assert rows[0][:3] == (1, 'language', 'en')
+
+
+def test_get_setting(database_connection):
+    database_connection.add_setting(chat_id=1, setting='language', value='es')
+    value = database_connection.get_setting(chat_id=1, setting='language')
+
+    assert value == 'es'
+
+
+def test_get_setting_nonexisting(database_connection):
+    value = database_connection.get_setting(chat_id=1, setting='language')
+
+    assert value is None

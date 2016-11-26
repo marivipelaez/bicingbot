@@ -19,11 +19,20 @@ limitations under the License.
 """
 
 from bicingbot.internationalization import tr, STRINGS, get_languages
+import mock
+
+
+@mock.patch('bicingbot.language.DatabaseConnection')
+def test_translate_language(DatabaseConnection):
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_setting.return_value = 'en'
+
+    assert tr('wrong_station', 1) == STRINGS['en']['wrong_station']
 
 
 def test_translate_default_language():
-    assert tr('wrong_station', None) == STRINGS['es']['wrong_station']
+    assert tr('wrong_station', 1) == STRINGS['es']['wrong_station']
 
 
 def test_get_languages():
-    assert get_languages() ==  {'en': 'English', 'es': 'Español'}
+    assert get_languages() == {'en': 'English', 'es': 'Español'}

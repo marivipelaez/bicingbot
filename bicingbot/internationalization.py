@@ -102,9 +102,11 @@ def tr(string_id, chat_id):
     :param string_id: string id
     :return: localized string value
     """
-    # TODO: get language from database
-    language = DEFAULT_LANGUAGE
-    return STRINGS[language][string_id]
+    from bicingbot.language import get_language
+    try:
+        return STRINGS[get_language(chat_id)][string_id]
+    except Exception:
+        return STRINGS[DEFAULT_LANGUAGE][string_id]
 
 
 def get_languages():

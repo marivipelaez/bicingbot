@@ -91,3 +91,31 @@ class DatabaseConnection(object):
         cursor = self.connection.cursor()
         cursor.execute("DELETE FROM groups WHERE chat_id=? AND name=?", (chat_id, name))
         self.connection.commit()
+
+    def add_setting(self, chat_id, setting, value):
+        """
+        Inserts or updates a setting value for a chat_id
+
+        :param chat_id: user's chat_id
+        :param setting: name of the setting
+        :param value: setting value
+        """
+        cursor = self.connection.cursor()
+        cursor.execute("INSERT OR REPLACE INTO settings (chat_id, setting, value) VALUES (?,?,?)",
+                       (chat_id, setting, value))
+        self.connection.commit()
+
+    def get_setting(self, chat_id, setting):
+        """
+        Retrieves the setting value of a chat_id
+
+        :param chat_id: user's chat_id
+        :param setting: name of the setting to retrieve
+        :return: the value of the setting
+        """
+        cursor = self.connection.cursor()
+        cursor.execute('SELECT value FROM settings WHERE chat_id=? and setting=?', (chat_id, setting))
+        try:
+            return cursor.fetchone()[0]
+        except TypeError:
+            return None

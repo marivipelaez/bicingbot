@@ -20,17 +20,61 @@ limitations under the License.
 
 import mock
 
-from bicingbot.internationalization import STRINGS
-from bicingbot.language import language_command
+from bicingbot.language import language_command, update_language, get_language, LANGUAGE_SETTING
 
 chat_id = '333'
 
 
+@mock.patch('bicingbot.language.DatabaseConnection')
 @mock.patch('bicingbot.language.get_bot')
-def test_language_command(get_bot):
+def test_language_command(get_bot, DatabaseConnection):
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_setting.return_value = 'en'
     get_bot.return_value = mock.MagicMock()
 
     language_command(chat_id, 'language')
 
     # Check bot calls and temporal cache
     get_bot().send_message.assert_called_once()
+
+
+@mock.patch('bicingbot.language.DatabaseConnection')
+@mock.patch('bicingbot.language.get_bot')
+def test_update_language(get_bot, DatabaseConnection):
+    DatabaseConnection.return_value = mock.MagicMock()
+    get_bot.return_value = mock.MagicMock()
+
+    update_language(chat_id, 1, 'es')
+
+    # Check bot calls and temporal cache
+    get_bot().answer_callback_query.assert_called_once()
+    DatabaseConnection().add_setting.assert_called_with(chat_id=chat_id, setting=LANGUAGE_SETTING, value='es')
+
+
+@mock.patch('bicingbot.language.DatabaseConnection')
+@mock.patch('bicingbot.language.get_bot')
+def test_update_language_wrong(get_bot, DatabaseConnection):
+    DatabaseConnection.return_value = mock.MagicMock()
+    get_bot.return_value = mock.MagicMock()
+
+    update_language(chat_id, 1, 'nolanguage')
+
+    # Check bot calls and temporal cache
+    get_bot().answer_callback_query.assert_not_called()
+    DatabaseConnection().add_setting.assert_not_called()
+
+
+@mock.patch('bicingbot.language.DatabaseConnection')
+def test_get_language(DatabaseConnection):
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_setting.return_value = 'en'
+
+    assert get_language(chat_id) == 'en'
+
+
+@mock.patch('bicingbot.language.DatabaseConnection')
+def test_get_language_wrong(DatabaseConnection):
+    DatabaseConnection.return_value = mock.MagicMock()
+    DatabaseConnection().get_setting.return_value = None
+
+    assert get_language(chat_id) is None
