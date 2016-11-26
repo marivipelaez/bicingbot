@@ -78,9 +78,10 @@ def newgroup_command(chat_id, text):
     """
     group_status = get_group_status(chat_id)
     from bicingbot.commands import send_stations_status, COMMANDS
+    db_connection = DatabaseConnection()
     if group_status == 0:
         logger.info('COMMAND /newgroup: chat_id={}'.format(chat_id))
-        if len(DatabaseConnection().get_groups_names(chat_id)) < MAX_NUMBER_GROUPS:
+        if len(db_connection.get_groups_names(chat_id)) < MAX_NUMBER_GROUPS:
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name', chat_id))
             set_group_status(chat_id, 1)
         else:
@@ -91,7 +92,7 @@ def newgroup_command(chat_id, text):
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
         else:
             message = tr('newgroup_stations', chat_id)
-            if text in DatabaseConnection().get_groups_names(chat_id):
+            if text in db_connection.get_groups_names(chat_id):
                 message = tr('newgroup_name_already_existing', chat_id).format(message.lower())
             GROUPS_CACHE[chat_id]['name'] = text
             get_bot().send_message(chat_id=chat_id, text=message)
@@ -99,16 +100,16 @@ def newgroup_command(chat_id, text):
     elif group_status == 2:
         if text in COMMANDS['end']['alias']:
             if GROUPS_CACHE[chat_id]['stations']:
-                DatabaseConnection().delete_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'])
-                DatabaseConnection().create_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'],
-                                                  stations=GROUPS_CACHE[chat_id]['stations'])
+                db_connection.delete_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'])
+                db_connection.create_group(chat_id=chat_id, name=GROUPS_CACHE[chat_id]['name'],
+                                           stations=GROUPS_CACHE[chat_id]['stations'])
                 get_bot().send_message(chat_id=chat_id,
                                        text=tr('newgroup_created', chat_id).format(GROUPS_CACHE[chat_id]['name']))
                 send_stations_status(chat_id, GROUPS_CACHE[chat_id]['stations'])
             else:
-                if GROUPS_CACHE[chat_id]['name'] in DatabaseConnection().get_groups_names(chat_id):
+                if GROUPS_CACHE[chat_id]['name'] in db_connection.get_groups_names(chat_id):
                     get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_overwrite', chat_id).format(
-                            GROUPS_CACHE[chat_id]['name']))
+                        GROUPS_CACHE[chat_id]['name']))
                 else:
                     get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
             del_group_status(chat_id)
@@ -120,6 +121,8 @@ def newgroup_command(chat_id, text):
                                        text=tr('newgroup_number_stations_limit', chat_id).format(MAX_NUMBER_STATIONS))
         else:
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_unknown_command', chat_id))
+
+    db_connection.close()
 
 
 def is_valid_group_name(text):
@@ -142,7 +145,9 @@ def groups_command(chat_id, text):
     :param text: command name
     """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
-    groups = DatabaseConnection().get_groups_names(chat_id)
+    db_connection = DatabaseConnection()
+    groups = db_connection.get_groups_names(chat_id)
+    db_connection.close()
     if groups:
         get_bot().send_message(chat_id=chat_id, text=', '.join(['/' + group for group in groups]))
     else:

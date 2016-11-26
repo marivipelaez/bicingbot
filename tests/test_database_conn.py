@@ -23,6 +23,7 @@ import os
 import pytest
 
 from bicingbot.database_conn import DatabaseConnection
+from bicingbot.database_migration import DatabaseMigration
 from sqlite3.dbapi2 import IntegrityError
 
 
@@ -30,8 +31,8 @@ from sqlite3.dbapi2 import IntegrityError
 def database_connection():
     config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'conf')
     os.remove(os.path.join(config_path, 'bicingbot_test.db'))
+    DatabaseMigration(database='bicingbot_test.db').create_schema()
     conn = DatabaseConnection(database='bicingbot_test.db')
-    conn.create_schema()
     yield conn
     conn.close()
 

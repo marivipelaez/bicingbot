@@ -105,13 +105,16 @@ def bicingbot_commands(chat_id, text):
     elif is_integer(text):
         logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
         send_stations_status(chat_id, [int(text)])
-    elif text in DatabaseConnection().get_groups_names(chat_id):
-        logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
-        group = DatabaseConnection().get_group(chat_id, text)
-        send_stations_status(chat_id, group['stations'])
     else:
-        logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
-        get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+        db_connection = DatabaseConnection()
+        if text in db_connection.get_groups_names(chat_id):
+            logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
+            group = db_connection.get_group(chat_id, text)
+            send_stations_status(chat_id, group['stations'])
+        else:
+            logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
+            get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+        db_connection.close()
 
 
 def send_stations_status(chat_id, stations):

@@ -38,20 +38,6 @@ class DatabaseConnection(object):
         """
         self.connection.close()
 
-    def create_schema(self):
-        """
-        Creates the schema of the database
-        """
-        cursor = self.connection.cursor()
-
-        # Create groups table
-        cursor.execute('''CREATE TABLE groups (chat_id INTEGER NOT NULL,
-                                               name TEXT NOT NULL,
-                                               station_id INTEGER NOT NULL,
-                                               created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                               PRIMARY KEY (chat_id, name, station_id))''')
-        self.connection.commit()
-
     def create_group(self, chat_id, name, stations):
         """
         Inserts a new group definition
