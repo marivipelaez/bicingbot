@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from bicingbot.utils import pad_number, compact_address, normalize_command_name
+from bicingbot.utils import pad_number, compact_address, normalize_command_name, grouper
 
 
 def test_normalize_command_name():
@@ -56,3 +56,7 @@ def test_compact_address_de():
 
 def test_compact_address_del():
     assert compact_address('Ronda del Mig') == 'Ronda Mig'
+
+
+def test_grouper():
+    assert list(grouper([1, 2, 3, 4, 5])) == [(1, 2, 3), (4, 5, None)]

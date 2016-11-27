@@ -57,7 +57,7 @@ STRINGS['es'] = {
     'newgroup_number_groups_limit': 'Lo siento, ya tienes {} grupos y no puedes crear más',
     'removegroup_name': 'Elige el grupo que quieres eliminar',
     'removegroup_not_found': 'Lo siento, no tienes ningún grupo con ese nombre',
-    'removegroup_removed': 'Ya he eliminado el grupo /{} ({})',
+    'removegroup_removed': "Ya he eliminado el grupo /{}, con estas estaciones '{}'",
     'groups_empty': 'Aún no tienes grupos. Para crear uno, envíame /nuevogrupo.'
 }
 
@@ -97,7 +97,7 @@ STRINGS['en'] = {
     'newgroup_number_groups_limit': 'So sorry, you already have {} groups and you cannot create any more',
     'removegroup_name': 'Choose the group you want to remove',
     'removegroup_not_found': 'So sorry, you have no group with that name',
-    'removegroup_removed': "I've already removed the group /{} ({})",
+    'removegroup_removed': "I've already removed the group /{}, with these stations '{}'",
     'groups_empty': 'You have no groups yet. To create one, send me /newgroup.'
 }
 
@@ -138,7 +138,7 @@ STRINGS['ca'] = {
     'newgroup_number_groups_limit': "Ho sento, ja tens {} grups i no pots crear més",
     'removegroup_name': 'Tria el grup que vols eliminar',
     'removegroup_not_found': 'Ho sento, no tens cap grup amb aquest nom',
-    'removegroup_removed': 'Ja he eliminat el grup /{} ({})',
+    'removegroup_removed': "Ja he eliminat el grup /{}, amb aquestes estacions '{}'",
     'groups_empty': "Encara no tens grups. Per crear-ne un de nou, envia'm /nougrup."
 }
 

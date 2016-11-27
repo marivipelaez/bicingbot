@@ -346,7 +346,7 @@ def test_remove_group(get_bot, DatabaseConnection):
     # Check bot calls
     get_bot().answer_callback_query.assert_called_once()
     get_bot().send_message.assert_called_with(chat_id=chat_id,
-                                              text=STRINGS['es']['removegroup_removed'].format('group2', '1,2'))
+                                              text=STRINGS['es']['removegroup_removed'].format('group2', '1, 2'))
     DatabaseConnection().delete_group.assert_called_with(chat_id=chat_id, name='group2')
 
 

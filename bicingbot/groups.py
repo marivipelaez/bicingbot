@@ -27,7 +27,7 @@ from telegram import InlineKeyboardMarkup
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.internationalization import tr
 from bicingbot.telegram_bot import get_bot
-from bicingbot.utils import is_integer
+from bicingbot.utils import is_integer, grouper
 
 logger = logging.getLogger(__name__)
 
@@ -157,9 +157,12 @@ def remove_group_command(chat_id, text):
     """
     db_connection = DatabaseConnection()
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton(group_name, callback_data='remove_{}'.format(group_name)) for group_name in
-         db_connection.get_groups_names(chat_id)]])
+    groups = grouper(db_connection.get_groups_names(chat_id))
+    buttons_lines = []
+    for groups_line in groups:
+        buttons_lines.append([InlineKeyboardButton(group_name, callback_data='remove_{}'.format(group_name))
+                              for group_name in groups_line if group_name])
+    keyboard = InlineKeyboardMarkup(buttons_lines)
     get_bot().send_message(chat_id=chat_id, text=tr('removegroup_name', chat_id), reply_markup=keyboard)
     db_connection.close()
 
@@ -178,7 +181,7 @@ def remove_group(chat_id, callback_query_id, group_name):
     else:
         stations = db_connection.get_group(chat_id, group_name)['stations']
         db_connection.delete_group(chat_id=chat_id, name=group_name)
-        message = tr('removegroup_removed', chat_id).format(group_name, ','.join(str(station) for station in stations))
+        message = tr('removegroup_removed', chat_id).format(group_name, ', '.join(str(station) for station in stations))
         get_bot().answer_callback_query(callback_query_id, text=message)
         get_bot().send_message(chat_id=chat_id, text=message)
     db_connection.close()
