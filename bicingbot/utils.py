@@ -20,6 +20,11 @@ limitations under the License.
 
 import re
 
+try:
+    from itertools import zip_longest
+except ImportError:
+    from itertools import izip_longest as zip_longest
+
 
 def normalize_command_name(text):
     """
@@ -65,3 +70,15 @@ def is_integer(text):
     :return: True if the text is an integer, False otherwise
     """
     return re.match("^[\d]+$", text)
+
+
+def grouper(iterable):
+    """
+    Return a list of elements in tuples of 3 elements
+    s -> (s0, s1, s2), (s3, s4, s5), ..."
+
+    :param iterable: list to be ordered
+    :return: the list of elements in tuples of 3 elements
+    """
+    args = [iter(iterable)] * 3
+    return zip_longest(*args)

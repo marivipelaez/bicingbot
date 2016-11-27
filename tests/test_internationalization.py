@@ -36,3 +36,8 @@ def test_translate_default_language():
 
 def test_get_languages():
     assert get_languages() == {'en': 'English', 'es': 'Español', 'ca': 'Català'}
+
+
+def test_check_languages_keys():
+    assert set(STRINGS['es'].keys()) == set(STRINGS['en'].keys())
+    assert set(STRINGS['es'].keys()) == set(STRINGS['ca'].keys())
