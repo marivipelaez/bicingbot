@@ -60,6 +60,7 @@ def update_language(chat_id, callback_query_id, data):
         db_connection.close()
 
         get_bot().answer_callback_query(callback_query_id, text=tr('language_updated', chat_id).format(languages[data]))
+        get_bot().send_message(chat_id=chat_id, text=tr('language_updated', chat_id).format(languages[data]))
 
 
 def get_language(chat_id):

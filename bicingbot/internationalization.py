@@ -31,6 +31,7 @@ STRINGS['es'] = {
         ' NOMBRE_GRUPO - muestra el estado de todas las estaciones del grupo',
         ' NÚMERO_ESTACIÓN - muestra el estado de esa estación',
         ' /grupos - muestra el nombre de todos tus grupos',
+        ' /idioma - te permite cambiar el idioma de la conversación'
     ],
     'language': 'Español',
     'language_choose': 'Elige tu idioma',
@@ -39,12 +40,12 @@ STRINGS['es'] = {
     'station_not_found': '[{}] estación no encontrada',
     'wrong_station': '[{}] ups, algo ha ido mal',
     'newgroup_name': 'Envíame el nombre de tu nuevo grupo',
-    'newgroup_stations': 'Envíame cada número de estación en un mensaje y cuando termines, envía /fin',
+    'newgroup_stations': 'Envíame cada número de estación en un mensaje y cuando termines, envíame /fin',
     'newgroup_created': 'Tu nuevo grupo /{} está listo',
     'newgroup_name_format_error': ('Lo siento, ese nombre no es válido. Puede contener letras, números, guiones bajos '
                                    'y guiones, pero no puede ser un número, ni llamarse igual que ninguno de mis '
                                    'comandos'),
-    'newgroup_name_already_existing': ('Ya tienes un grupo con ese nombre\nSi quieres mantenerlo, envía /fin'
+    'newgroup_name_already_existing': ('Ya tienes un grupo con ese nombre\nSi quieres mantenerlo, envíame /fin'
                                        '\nPara volver a crearlo, {}'),
     'newgroup_not_created': 'Como no has enviado ninguna estación, no he creado el grupo',
     'newgroup_not_overwrite': 'Vale, no modifico tu grupo /{}',
@@ -68,6 +69,7 @@ STRINGS['en'] = {
         ' GROUP_NAME - shows the status of all the stations within this group',
         ' STATION_ID - shows the status of this station',
         ' /groups - shows the name of all your groups',
+        ' /language - to choose the language of the chat'
     ],
     'language': 'English',
     'language_choose': 'Choose your language',
@@ -89,6 +91,43 @@ STRINGS['en'] = {
     'newgroup_number_stations_limit': 'So sorry, a group only can contain {} stations. Send me /end to finish',
     'newgroup_number_groups_limit': 'So sorry, you already have {} groups and you cannot create any more',
     'groups_empty': 'You have no groups yet. To create one, send me /newgroup.'
+}
+
+STRINGS['ca'] = {
+    'welcome': [
+        "Hola, sóc BicingBot i t'ajudo a conèixer l'estat de les estacions del Bicing.",
+        ''
+    ],
+    'help': [
+        'Aquests són els meus comandaments:',
+        ' /ajuda - mostra aquesta ajuda',
+        " /nougrup - crea un grup d'estacions",
+        " NOM_GRUP - mostra l'estat de totes les estacions del grup",
+        " NÚMERO_ESTACIÓ - mostra l'estat d'aquesta estació",
+        ' /grups - mostra el nom de tots els teus grups',
+        " /idioma - et permet canviar l'idioma de la conversa"
+    ],
+    'language': 'Català',
+    'language_choose': 'Tria el teu idioma',
+    'language_updated': "Has canviat l'idioma a Català",
+    'unknown_command': "Ho sento, no t'he entès. Si necessites ajuda envia'm /ajuda.",
+    'station_not_found': '[{}] estació no trobada',
+    'wrong_station': '[{}] ups, alguna cosa ha anat malament',
+    'newgroup_name': "Envia'm el nom del teu nou grup",
+    'newgroup_stations': "Envia'm cada número d'estació en un missatge i quan acabis, envia'm /fi",
+    'newgroup_created': 'El teu nou grup /{} està llest',
+    'newgroup_name_format_error': ('Ho sento, aquest nom no es vàlid. Pot contenir lletres, nombres, guions baixos '
+                                   'i guions, però no pot ser un nombre, ni dir-se igual que cap dels meus '
+                                   'comandaments.'),
+    'newgroup_name_already_existing': ("Ja tens un grup amb aquest nom\nSi vols mantenir-lo, envia'm /fi"
+                                       '\nPer tornar a crear-lo, {}'),
+    'newgroup_not_created': 'Com no has enviat cap estació, no he creat el grup',
+    'newgroup_not_overwrite': "D'acord, no modifico el teu grup /{}",
+    'newgroup_unknown_command': ("Ho sento, no és un número d'estació vàlid. Envia'm un número correcte o /fi "
+                                 "per acabar"),
+    'newgroup_number_stations_limit': "Ho sento, només pot haver {} estacions dins d'un grup. Envia'm /fi per acabar",
+    'newgroup_number_groups_limit': "Ho sento, ja tens {} grups i no pots crear més",
+    'groups_empty': "Encara no tens grups. Per crear-ne un de nou, envia'm /nougrup."
 }
 
 DEFAULT_LANGUAGE = 'es'

@@ -48,6 +48,7 @@ def test_update_language(get_bot, DatabaseConnection):
 
     # Check bot calls and temporal cache
     get_bot().answer_callback_query.assert_called_once()
+    get_bot().send_message.assert_called_once()
     DatabaseConnection().add_setting.assert_called_with(chat_id=chat_id, setting=LANGUAGE_SETTING, value='es')
 
 
@@ -61,6 +62,7 @@ def test_update_language_wrong(get_bot, DatabaseConnection):
 
     # Check bot calls and temporal cache
     get_bot().answer_callback_query.assert_not_called()
+    get_bot().send_message.assert_not_called()
     DatabaseConnection().add_setting.assert_not_called()
 
 

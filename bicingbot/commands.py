@@ -67,12 +67,12 @@ def settings_command(chat_id, text):
 
 COMMANDS = {
     'start': {'alias': ['start'], 'method': start_command},
-    'help': {'alias': ['help', 'ayuda'], 'method': help_command},
+    'help': {'alias': ['help', 'ayuda', 'ajuda'], 'method': help_command},
     'settings': {'alias': ['settings'], 'method': settings_command},
     'language': {'alias': ['language', 'idioma'], 'method': language_command},
-    'newgroup': {'alias': ['newgroup', 'nuevogrupo'], 'method': newgroup_command},
-    'groups': {'alias': ['groups', 'grupos'], 'method': groups_command},
-    'end': {'alias': ['end', 'fin'], 'method': None}
+    'newgroup': {'alias': ['newgroup', 'nuevogrupo', 'nougrup'], 'method': newgroup_command},
+    'groups': {'alias': ['groups', 'grupos', 'grups'], 'method': groups_command},
+    'end': {'alias': ['end', 'fin', 'fi'], 'method': None}
 }
 
 
