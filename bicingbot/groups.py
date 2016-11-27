@@ -88,7 +88,10 @@ def newgroup_command(chat_id, text):
             get_bot().send_message(chat_id=chat_id,
                                    text=tr('newgroup_number_groups_limit', chat_id).format(MAX_NUMBER_GROUPS))
     elif group_status == 1:
-        if not is_valid_group_name(text):
+        if text in COMMANDS['end']['alias']:
+            get_bot().send_message(chat_id=chat_id, text=tr('newgroup_not_created', chat_id))
+            del_group_status(chat_id)
+        elif not is_valid_group_name(text):
             get_bot().send_message(chat_id=chat_id, text=tr('newgroup_name_format_error', chat_id))
         else:
             message = tr('newgroup_stations', chat_id)

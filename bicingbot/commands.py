@@ -98,10 +98,10 @@ def bicingbot_commands(chat_id, text):
     """
     text = normalize_command_name(text)
     command_method = get_command_method(text)
-    if command_method:
-        command_method(chat_id, text)
-    elif get_group_status(chat_id) > 0:
+    if get_group_status(chat_id) > 0:
         newgroup_command(chat_id, text)
+    elif command_method:
+        command_method(chat_id, text)
     elif is_integer(text):
         logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
         send_stations_status(chat_id, [int(text)])

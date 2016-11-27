@@ -72,6 +72,21 @@ def test_newgroup_command(get_bot, DatabaseConnection, Bicing, commands_get_bot)
 
 @mock.patch('bicingbot.groups.DatabaseConnection')
 @mock.patch('bicingbot.groups.get_bot')
+def test_newgroup_command_cancel(get_bot, DatabaseConnection):
+    get_bot.return_value = mock.MagicMock()
+    del_group_status(chat_id)
+
+    newgroup_command(chat_id, 'newgroup')
+
+    newgroup_command(chat_id, 'end')
+
+    # Check bot and database calls
+    get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['newgroup_not_created'])
+    DatabaseConnection().create_group.assert_not_called()
+
+
+@mock.patch('bicingbot.groups.DatabaseConnection')
+@mock.patch('bicingbot.groups.get_bot')
 def test_newgroup_command_number_groups_limit(get_bot, DatabaseConnection):
     get_bot.return_value = mock.MagicMock()
     DatabaseConnection.return_value = mock.MagicMock()
