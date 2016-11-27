@@ -26,6 +26,7 @@ from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.groups import get_group_status, newgroup_command, groups_command
 from bicingbot.internationalization import tr
+from bicingbot.language import language_command, update_language
 from bicingbot.telegram_bot import get_bot
 from bicingbot.utils import pad_number, compact_address, normalize_command_name, is_integer
 
@@ -66,11 +67,12 @@ def settings_command(chat_id, text):
 
 COMMANDS = {
     'start': {'alias': ['start'], 'method': start_command},
-    'help': {'alias': ['help', 'ayuda'], 'method': help_command},
+    'help': {'alias': ['help', 'ayuda', 'ajuda'], 'method': help_command},
     'settings': {'alias': ['settings'], 'method': settings_command},
-    'newgroup': {'alias': ['newgroup', 'nuevogrupo'], 'method': newgroup_command},
-    'groups': {'alias': ['groups', 'grupos'], 'method': groups_command},
-    'end': {'alias': ['end', 'fin'], 'method': None}
+    'language': {'alias': ['language', 'idioma'], 'method': language_command},
+    'newgroup': {'alias': ['newgroup', 'nuevogrupo', 'nougrup'], 'method': newgroup_command},
+    'groups': {'alias': ['groups', 'grupos', 'grups'], 'method': groups_command},
+    'end': {'alias': ['end', 'fin', 'fi'], 'method': None}
 }
 
 
@@ -103,13 +105,16 @@ def bicingbot_commands(chat_id, text):
     elif is_integer(text):
         logger.info('COMMAND /station {}: chat_id={}'.format(text, chat_id))
         send_stations_status(chat_id, [int(text)])
-    elif text in DatabaseConnection().get_groups_names(chat_id):
-        logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
-        group = DatabaseConnection().get_group(chat_id, text)
-        send_stations_status(chat_id, group['stations'])
     else:
-        logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
-        get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+        db_connection = DatabaseConnection()
+        if text in db_connection.get_groups_names(chat_id):
+            logger.info('COMMAND /group {}: chat_id={}'.format(text, chat_id))
+            group = db_connection.get_group(chat_id, text)
+            send_stations_status(chat_id, group['stations'])
+        else:
+            logger.info('UNKNOWN COMMAND {}: chat_id={}'.format(text, chat_id))
+            get_bot().send_message(chat_id=chat_id, text=tr('unknown_command', chat_id))
+        db_connection.close()
 
 
 def send_stations_status(chat_id, stations):
@@ -147,3 +152,14 @@ def prepare_stations_status_response(stations):
                                                         station['id'], compact_address(station['streetName']),
                                                         station['streetNumber']))
     return '\n'.join(messages)
+
+
+def bicingbot_callback_response(chat_id, callback_query_id, data):
+    """
+    Handles bicingbot callback query responses and sends the corresponding messages to the user
+
+    :param chat_id: Telegram chat id
+    :param callback_query_id: unique callback query id
+    :param data: callback query response
+    """
+    update_language(chat_id, callback_query_id, data)

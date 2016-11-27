@@ -17,22 +17,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
-from bicingbot.internationalization import tr, STRINGS, get_languages
-import mock
+from bicingbot.database_migration import DatabaseMigration
 
 
-@mock.patch('bicingbot.language.DatabaseConnection')
-def test_translate_language(DatabaseConnection):
-    DatabaseConnection.return_value = mock.MagicMock()
-    DatabaseConnection().get_setting.return_value = 'en'
-
-    assert tr('wrong_station', 1) == STRINGS['en']['wrong_station']
-
-
-def test_translate_default_language():
-    assert tr('wrong_station', 1) == STRINGS['es']['wrong_station']
-
-
-def test_get_languages():
-    assert get_languages() == {'en': 'English', 'es': 'Español', 'ca': 'Català'}
+if __name__ == "__main__":
+    DatabaseMigration(database='bicingbot.db').create_initial_schema()

@@ -44,6 +44,7 @@ def get_bot():
     Gets the already instantiated Telegram client
 
     :return: Telegram client instance
+    :rtype: telegram.Bot
     """
     if not _bot:
         initialize_bot()
