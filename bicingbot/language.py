@@ -29,6 +29,7 @@ from bicingbot.telegram_bot import get_bot
 logger = logging.getLogger(__name__)
 
 LANGUAGE_SETTING = 'language'
+LANGUAGE_CALLBACK = 'lang'
 
 
 def language_command(chat_id, text):
@@ -39,28 +40,29 @@ def language_command(chat_id, text):
     :param text: command name
     """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
-    buttons = [
-        [InlineKeyboardButton(lang_value, callback_data=lang_key) for lang_key, lang_value in get_languages().items()]]
-    keyboard = InlineKeyboardMarkup(buttons)
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton(lang_value, callback_data='{}_{}'.format(LANGUAGE_CALLBACK, lang_key)) for
+         lang_key, lang_value in get_languages().items()]])
     get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id), reply_markup=keyboard)
 
 
-def update_language(chat_id, callback_query_id, data):
+def update_language(chat_id, callback_query_id, language):
     """
     Updates user language and sends a confirmation notification
 
     :param chat_id: Telegram chat id
     :param callback_query_id: unique callback query id
-    :param data: callback query response
+    :param language: selected language
     """
     languages = get_languages()
-    if data in languages.keys():
+    if language in languages.keys():
         db_connection = DatabaseConnection()
-        db_connection.add_setting(chat_id=chat_id, setting=LANGUAGE_SETTING, value=data)
+        db_connection.add_setting(chat_id=chat_id, setting=LANGUAGE_SETTING, value=language)
         db_connection.close()
 
-        get_bot().answer_callback_query(callback_query_id, text=tr('language_updated', chat_id).format(languages[data]))
-        get_bot().send_message(chat_id=chat_id, text=tr('language_updated', chat_id).format(languages[data]))
+        message = tr('language_updated', chat_id).format(languages[language])
+        get_bot().answer_callback_query(callback_query_id, text=message)
+        get_bot().send_message(chat_id=chat_id, text=message)
 
 
 def get_language(chat_id):

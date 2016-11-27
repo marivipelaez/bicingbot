@@ -24,9 +24,10 @@ from telegram.emoji import Emoji
 
 from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
-from bicingbot.groups import get_group_status, newgroup_command, groups_command
+from bicingbot.groups import get_group_status, newgroup_command, remove_group_command, groups_command, remove_group
+from bicingbot.groups import GROUP_STATUS_INIT, REMOVE_GROUP_CALLBACK
 from bicingbot.internationalization import tr
-from bicingbot.language import language_command, update_language
+from bicingbot.language import language_command, update_language, LANGUAGE_CALLBACK
 from bicingbot.telegram_bot import get_bot
 from bicingbot.utils import pad_number, compact_address, normalize_command_name, is_integer
 
@@ -71,6 +72,7 @@ COMMANDS = {
     'settings': {'alias': ['settings'], 'method': settings_command},
     'language': {'alias': ['language', 'idioma'], 'method': language_command},
     'newgroup': {'alias': ['newgroup', 'nuevogrupo', 'nougrup'], 'method': newgroup_command},
+    'removegroup': {'alias': ['removegroup', 'eliminargrupo', 'eliminargrup'], 'method': remove_group_command},
     'groups': {'alias': ['groups', 'grupos', 'grups'], 'method': groups_command},
     'end': {'alias': ['end', 'fin', 'fi'], 'method': None}
 }
@@ -98,7 +100,7 @@ def bicingbot_commands(chat_id, text):
     """
     text = normalize_command_name(text)
     command_method = get_command_method(text)
-    if get_group_status(chat_id) > 0:
+    if get_group_status(chat_id) > GROUP_STATUS_INIT:
         newgroup_command(chat_id, text)
     elif command_method:
         command_method(chat_id, text)
@@ -162,4 +164,9 @@ def bicingbot_callback_response(chat_id, callback_query_id, data):
     :param callback_query_id: unique callback query id
     :param data: callback query response
     """
-    update_language(chat_id, callback_query_id, data)
+    logger.info('COMMAND callback {}: chat_id={}'.format(data, chat_id))
+    command, text = data.split('_', 1)
+    if command == REMOVE_GROUP_CALLBACK:
+        remove_group(chat_id, callback_query_id, text)
+    elif command == LANGUAGE_CALLBACK:
+        update_language(chat_id, callback_query_id, text)

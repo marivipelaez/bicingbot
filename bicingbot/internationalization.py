@@ -30,6 +30,7 @@ STRINGS['es'] = {
         ' /nuevogrupo - crea un grupo de estaciones',
         ' NOMBRE_GRUPO - muestra el estado de todas las estaciones del grupo',
         ' NÚMERO_ESTACIÓN - muestra el estado de esa estación',
+        ' /eliminargrupo - elimina uno de tus grupos de estaciones',
         ' /grupos - muestra el nombre de todos tus grupos',
         ' /idioma - te permite cambiar el idioma de la conversación'
     ],
@@ -54,6 +55,9 @@ STRINGS['es'] = {
     'newgroup_number_stations_limit': ('Lo siento, sólo puede haber {} estaciones dentro de un grupo. Envíame /fin '
                                        'para terminar'),
     'newgroup_number_groups_limit': 'Lo siento, ya tienes {} grupos y no puedes crear más',
+    'removegroup_name': 'Elige el grupo que quieres eliminar',
+    'removegroup_not_found': 'Lo siento, no tienes ningún grupo con ese nombre',
+    'removegroup_removed': 'Ya he eliminado el grupo /{} ({})',
     'groups_empty': 'Aún no tienes grupos. Para crear uno, envíame /nuevogrupo.'
 }
 
@@ -68,6 +72,7 @@ STRINGS['en'] = {
         ' /newgroup - creates a stations group',
         ' GROUP_NAME - shows the status of all the stations within this group',
         ' STATION_ID - shows the status of this station',
+        ' /removegroup - remove one of your stations groups',
         ' /groups - shows the name of all your groups',
         ' /language - to choose the language of the chat'
     ],
@@ -90,6 +95,9 @@ STRINGS['en'] = {
                                  'finish'),
     'newgroup_number_stations_limit': 'So sorry, a group only can contain {} stations. Send me /end to finish',
     'newgroup_number_groups_limit': 'So sorry, you already have {} groups and you cannot create any more',
+    'removegroup_name': 'Choose the group you want to remove',
+    'removegroup_not_found': 'So sorry, you have no group with that name',
+    'removegroup_removed': "I've already removed the group /{} ({})",
     'groups_empty': 'You have no groups yet. To create one, send me /newgroup.'
 }
 
@@ -104,6 +112,7 @@ STRINGS['ca'] = {
         " /nougrup - crea un grup d'estacions",
         " NOM_GRUP - mostra l'estat de totes les estacions del grup",
         " NÚMERO_ESTACIÓ - mostra l'estat d'aquesta estació",
+        " /eliminargrup - elimina un dels teus grups d'estacions",
         ' /grups - mostra el nom de tots els teus grups',
         " /idioma - et permet canviar l'idioma de la conversa"
     ],
@@ -127,6 +136,9 @@ STRINGS['ca'] = {
                                  "per acabar"),
     'newgroup_number_stations_limit': "Ho sento, només pot haver {} estacions dins d'un grup. Envia'm /fi per acabar",
     'newgroup_number_groups_limit': "Ho sento, ja tens {} grups i no pots crear més",
+    'removegroup_name': 'Tria el grup que vols eliminar',
+    'removegroup_not_found': 'Ho sento, no tens cap grup amb aquest nom',
+    'removegroup_removed': 'Ja he eliminat el grup /{} ({})',
     'groups_empty': "Encara no tens grups. Per crear-ne un de nou, envia'm /nougrup."
 }
 
