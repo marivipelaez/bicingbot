@@ -156,17 +156,17 @@ def prepare_stations_status_response(stations):
     return '\n'.join(messages)
 
 
-def bicingbot_callback_response(chat_id, callback_query_id, data):
+def bicingbot_callback(chat_id, data, callback_query):
     """
     Handles bicingbot callback query responses and sends the corresponding messages to the user
 
     :param chat_id: Telegram chat id
-    :param callback_query_id: unique callback query id
-    :param data: callback query response
+    :param data: callback query data
+    :param callback_query: callback query
     """
     logger.info('COMMAND callback {}: chat_id={}'.format(data, chat_id))
     command, text = data.split('_', 1)
     if command == REMOVE_GROUP_CALLBACK:
-        remove_group(chat_id, callback_query_id, text)
+        remove_group(chat_id, text, callback_query)
     elif command == LANGUAGE_CALLBACK:
-        update_language(chat_id, callback_query_id, text)
+        update_language(chat_id, text, callback_query)

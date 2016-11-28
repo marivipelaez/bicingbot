@@ -46,13 +46,13 @@ def language_command(chat_id, text):
     get_bot().send_message(chat_id=chat_id, text=tr('language_choose', chat_id), reply_markup=keyboard)
 
 
-def update_language(chat_id, callback_query_id, language):
+def update_language(chat_id, language, callback_query):
     """
     Updates user language and sends a confirmation notification
 
     :param chat_id: Telegram chat id
-    :param callback_query_id: unique callback query id
     :param language: selected language
+    :param callback_query: callback query
     """
     languages = get_languages()
     if language in languages.keys():
@@ -61,7 +61,7 @@ def update_language(chat_id, callback_query_id, language):
         db_connection.close()
 
         message = tr('language_updated', chat_id).format(languages[language])
-        get_bot().answer_callback_query(callback_query_id, text=message)
+        get_bot().answer_callback_query(callback_query.id, text=message)
         get_bot().send_message(chat_id=chat_id, text=message)
 
 

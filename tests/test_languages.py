@@ -21,6 +21,7 @@ limitations under the License.
 import mock
 
 from bicingbot.language import language_command, update_language, get_language, LANGUAGE_SETTING
+from tests.utils import CallbackQuery
 
 chat_id = '333'
 
@@ -44,7 +45,8 @@ def test_update_language(get_bot, DatabaseConnection):
     DatabaseConnection.return_value = mock.MagicMock()
     get_bot.return_value = mock.MagicMock()
 
-    update_language(chat_id, 1, 'es')
+    callback_query = CallbackQuery(1)
+    update_language(chat_id, 'es', callback_query)
 
     # Check bot calls
     get_bot().answer_callback_query.assert_called_once()
@@ -58,7 +60,8 @@ def test_update_language_wrong(get_bot, DatabaseConnection):
     DatabaseConnection.return_value = mock.MagicMock()
     get_bot.return_value = mock.MagicMock()
 
-    update_language(chat_id, 1, 'nolanguage')
+    callback_query = CallbackQuery(1)
+    update_language(chat_id, 'nolanguage', callback_query)
 
     # Check bot calls
     get_bot().answer_callback_query.assert_not_called()

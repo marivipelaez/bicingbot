@@ -21,10 +21,11 @@ limitations under the License.
 import mock
 
 from bicingbot import groups
-from bicingbot.commands import bicingbot_commands, bicingbot_callback_response, COMMANDS
+from bicingbot.commands import bicingbot_commands, bicingbot_callback, COMMANDS
 from bicingbot.groups import REMOVE_GROUP_CALLBACK
 from bicingbot.internationalization import STRINGS
 from bicingbot.language import LANGUAGE_CALLBACK
+from tests.utils import CallbackQuery
 
 chat_id = '333'
 
@@ -116,38 +117,42 @@ def test_bicingbot_command_unknown(get_bot, Bicing, DatabaseConnection):
 
 
 @mock.patch('bicingbot.commands.update_language')
-def test_bicingbot_callback_response_language(update_language):
+def test_bicingbot_callback_language(update_language):
     update_language.return_value = mock.MagicMock()
-    bicingbot_callback_response(chat_id, 1, '{}_en'.format(LANGUAGE_CALLBACK))
+    callback_query = CallbackQuery(1)
+    bicingbot_callback(chat_id, '{}_en'.format(LANGUAGE_CALLBACK), callback_query)
 
     # Check that send message has been called with correct arguments
-    update_language.assert_called_with(chat_id, 1, 'en')
+    update_language.assert_called_with(chat_id, 'en', callback_query)
 
 
 @mock.patch('bicingbot.commands.remove_group')
-def test_bicingbot_callback_response_remove_group(remove_group):
+def test_bicingbot_callback_remove_group(remove_group):
     remove_group.return_value = mock.MagicMock()
-    bicingbot_callback_response(chat_id, 1, '{}_group1'.format(REMOVE_GROUP_CALLBACK))
+    callback_query = CallbackQuery(1, message_id=111)
+    bicingbot_callback(chat_id, '{}_group1'.format(REMOVE_GROUP_CALLBACK), callback_query)
 
     # Check that send message has been called with correct arguments
-    remove_group.assert_called_with(chat_id, 1, 'group1')
+    remove_group.assert_called_with(chat_id, 'group1', callback_query)
 
 
 @mock.patch('bicingbot.commands.remove_group')
-def test_bicingbot_callback_response_remove_group_underscore(remove_group):
+def test_bicingbot_callback_remove_group_underscore(remove_group):
     remove_group.return_value = mock.MagicMock()
-    bicingbot_callback_response(chat_id, 1, '{}_name_group1'.format(REMOVE_GROUP_CALLBACK))
+    callback_query = CallbackQuery(1, message_id=111)
+    bicingbot_callback(chat_id, '{}_name_group1'.format(REMOVE_GROUP_CALLBACK), callback_query)
 
     # Check that send message has been called with correct arguments
-    remove_group.assert_called_with(chat_id, 1, 'name_group1')
+    remove_group.assert_called_with(chat_id, 'name_group1', callback_query)
 
 
 @mock.patch('bicingbot.commands.update_language')
 @mock.patch('bicingbot.commands.remove_group')
-def test_bicingbot_callback_response_unknown(remove_group, update_language):
+def test_bicingbot_callback_unknown(remove_group, update_language):
     update_language.return_value = mock.MagicMock()
     remove_group.return_value = mock.MagicMock()
-    bicingbot_callback_response(chat_id, 1, 'unknown_group1')
+    callback_query = CallbackQuery(1)
+    bicingbot_callback(chat_id, 'unknown_group1', callback_query)
 
     # Check that send message has been called with correct arguments
     update_language.assert_not_called()

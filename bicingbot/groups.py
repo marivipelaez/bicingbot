@@ -167,13 +167,13 @@ def remove_group_command(chat_id, text):
     db_connection.close()
 
 
-def remove_group(chat_id, callback_query_id, group_name):
+def remove_group(chat_id, group_name, callback_query):
     """
     Removes the group and sends a confirmation notification
 
     :param chat_id: Telegram chat id
-    :param callback_query_id: unique callback query id
     :param group_name: group name to be removed
+    :param callback_query: callback query
     """
     db_connection = DatabaseConnection()
     if group_name not in db_connection.get_groups_names(chat_id):
@@ -182,8 +182,8 @@ def remove_group(chat_id, callback_query_id, group_name):
         stations = db_connection.get_group(chat_id, group_name)['stations']
         db_connection.delete_group(chat_id=chat_id, name=group_name)
         message = tr('removegroup_removed', chat_id).format(group_name, ', '.join(str(station) for station in stations))
-        get_bot().answer_callback_query(callback_query_id, text=message)
-        get_bot().send_message(chat_id=chat_id, text=message)
+        get_bot().answer_callback_query(callback_query.id, text=message)
+        get_bot().edit_message_text(chat_id=chat_id, text=message, message_id=callback_query.message.message_id)
     db_connection.close()
 
 

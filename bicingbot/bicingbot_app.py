@@ -24,7 +24,7 @@ import os
 import telegram
 from flask import Flask, request
 
-from bicingbot.commands import bicingbot_commands, bicingbot_callback_response
+from bicingbot.commands import bicingbot_commands, bicingbot_callback
 from bicingbot.telegram_bot import get_bot
 
 # Initialize Flask app
@@ -53,10 +53,9 @@ def webhook_handler():
         bicingbot_commands(chat_id, text)
     except AttributeError:
         chat_id = update.callback_query.message.chat.id
-        callback_query_id = update.callback_query.id
         data = update.callback_query.data
         logger.debug("Received callback query response '{}' from chat_id={}".format(data, chat_id))
-        bicingbot_callback_response(chat_id, callback_query_id, data)
+        bicingbot_callback(chat_id, data, update.callback_query)
 
     return ''
 
