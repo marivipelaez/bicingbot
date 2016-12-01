@@ -38,6 +38,7 @@ GROUP_STATUS_INIT = 0
 GROUP_STATUS_NEWGROUP_NAME = 1
 GROUP_STATUS_NEWGROUP_STATIONS = 2
 REMOVE_GROUP_CALLBACK = 'remove'
+REMOVE_CANCEL_CALLBACK = 'removecancel'
 
 
 def get_group_status(chat_id):
@@ -160,8 +161,11 @@ def remove_group_command(chat_id, text):
     groups = grouper(db_connection.get_groups_names(chat_id))
     buttons_lines = []
     for groups_line in groups:
-        buttons_lines.append([InlineKeyboardButton(group_name, callback_data='remove_{}'.format(group_name))
-                              for group_name in groups_line if group_name])
+        buttons_lines.append(
+            [InlineKeyboardButton(group_name, callback_data='{}_{}'.format(REMOVE_GROUP_CALLBACK, group_name))
+             for group_name in groups_line if group_name])
+    buttons_lines.append([InlineKeyboardButton(tr('removegroup_cancel', chat_id),
+                                               callback_data='{}_unused'.format(REMOVE_CANCEL_CALLBACK))])
     keyboard = InlineKeyboardMarkup(buttons_lines)
     get_bot().send_message(chat_id=chat_id, text=tr('removegroup_name', chat_id), reply_markup=keyboard)
     db_connection.close()
@@ -185,6 +189,18 @@ def remove_group(chat_id, group_name, callback_query):
         get_bot().answer_callback_query(callback_query.id, text=message)
         get_bot().edit_message_text(chat_id=chat_id, text=message, message_id=callback_query.message.message_id)
     db_connection.close()
+
+
+def remove_group_cancel(chat_id, callback_query):
+    """
+    Cancels the removing of the group and sends a confirmation notification
+
+    :param chat_id: Telegram chat id
+    :param callback_query: callback query
+    """
+    message = tr('removegroup_canceled', chat_id)
+    get_bot().answer_callback_query(callback_query.id, text=message)
+    get_bot().edit_message_text(chat_id=chat_id, text=message, message_id=callback_query.message.message_id)
 
 
 def groups_command(chat_id, text):

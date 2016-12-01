@@ -22,7 +22,7 @@ import mock
 
 from bicingbot import groups
 from bicingbot.commands import bicingbot_commands, bicingbot_callback, COMMANDS
-from bicingbot.groups import REMOVE_GROUP_CALLBACK
+from bicingbot.groups import REMOVE_GROUP_CALLBACK, REMOVE_CANCEL_CALLBACK
 from bicingbot.internationalization import STRINGS
 from bicingbot.language import LANGUAGE_CALLBACK
 from tests.utils import CallbackQuery
@@ -122,7 +122,6 @@ def test_bicingbot_callback_language(update_language):
     callback_query = CallbackQuery(1)
     bicingbot_callback(chat_id, '{}_en'.format(LANGUAGE_CALLBACK), callback_query)
 
-    # Check that send message has been called with correct arguments
     update_language.assert_called_with(chat_id, 'en', callback_query)
 
 
@@ -132,7 +131,6 @@ def test_bicingbot_callback_remove_group(remove_group):
     callback_query = CallbackQuery(1, message_id=111)
     bicingbot_callback(chat_id, '{}_group1'.format(REMOVE_GROUP_CALLBACK), callback_query)
 
-    # Check that send message has been called with correct arguments
     remove_group.assert_called_with(chat_id, 'group1', callback_query)
 
 
@@ -142,8 +140,16 @@ def test_bicingbot_callback_remove_group_underscore(remove_group):
     callback_query = CallbackQuery(1, message_id=111)
     bicingbot_callback(chat_id, '{}_name_group1'.format(REMOVE_GROUP_CALLBACK), callback_query)
 
-    # Check that send message has been called with correct arguments
     remove_group.assert_called_with(chat_id, 'name_group1', callback_query)
+
+
+@mock.patch('bicingbot.commands.remove_group_cancel')
+def test_bicingbot_callback_remove_group_cancel(remove_group_cancel):
+    remove_group_cancel.return_value = mock.MagicMock()
+    callback_query = CallbackQuery(1, message_id=111)
+    bicingbot_callback(chat_id, '{}_unused'.format(REMOVE_CANCEL_CALLBACK), callback_query)
+
+    remove_group_cancel.assert_called_with(chat_id, callback_query)
 
 
 @mock.patch('bicingbot.commands.update_language')
@@ -154,6 +160,5 @@ def test_bicingbot_callback_unknown(remove_group, update_language):
     callback_query = CallbackQuery(1)
     bicingbot_callback(chat_id, 'unknown_group1', callback_query)
 
-    # Check that send message has been called with correct arguments
     update_language.assert_not_called()
     remove_group.assert_not_called()
