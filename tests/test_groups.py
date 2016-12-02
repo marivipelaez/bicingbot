@@ -21,10 +21,11 @@ limitations under the License.
 import mock
 
 from bicingbot.groups import GROUPS_CACHE, MAX_NUMBER_GROUPS, MAX_NUMBER_STATIONS
-from bicingbot.groups import GROUP_STATUS_INIT, GROUP_STATUS_NEWGROUP_NAME, GROUP_STATUS_NEWGROUP_STATIONS
-from bicingbot.groups import remove_group_command, remove_group
+from bicingbot.groups import GROUP_STATUS_NEWGROUP_NAME, GROUP_STATUS_NEWGROUP_STATIONS
 from bicingbot.groups import newgroup_command, del_group_status, is_valid_group_name, groups_command
+from bicingbot.groups import remove_group_command, remove_group, remove_group_cancel
 from bicingbot.internationalization import STRINGS
+from tests.utils import CallbackQuery
 
 chat_id = '333'
 
@@ -341,12 +342,14 @@ def test_remove_group(get_bot, DatabaseConnection):
     DatabaseConnection().get_groups_names.return_value = ['group1', 'group2']
     DatabaseConnection().get_group.return_value = {'stations': [1, 2]}
 
-    remove_group(chat_id, 1, 'group2')
+    callback_query = CallbackQuery(1, message_id=111)
+    remove_group(chat_id, 'group2', callback_query)
 
     # Check bot calls
     get_bot().answer_callback_query.assert_called_once()
-    get_bot().send_message.assert_called_with(chat_id=chat_id,
-                                              text=STRINGS['es']['removegroup_removed'].format('group2', '1, 2'))
+    get_bot().edit_message_text.assert_called_with(chat_id=chat_id,
+                                                   text=STRINGS['es']['removegroup_removed'].format('group2', '1, 2'),
+                                                   message_id=111)
     DatabaseConnection().delete_group.assert_called_with(chat_id=chat_id, name='group2')
 
 
@@ -357,9 +360,23 @@ def test_remove_group_not_found(get_bot, DatabaseConnection):
     DatabaseConnection.return_value = mock.MagicMock()
     DatabaseConnection().get_groups_names.return_value = ['group1', 'group2']
 
-    remove_group(chat_id, 1, 'notfound')
+    callback_query = CallbackQuery(1, message_id=111)
+    remove_group(chat_id, 'notfound', callback_query)
 
     # Check bot calls
     get_bot().answer_callback_query.assert_not_called()
     get_bot().send_message.assert_called_with(chat_id=chat_id, text=STRINGS['es']['removegroup_not_found'])
     DatabaseConnection().delete_group.assert_not_called()
+
+
+@mock.patch('bicingbot.groups.get_bot')
+def test_remove_group_cancel(get_bot):
+    get_bot.return_value = mock.MagicMock()
+
+    callback_query = CallbackQuery(1, message_id=111)
+    remove_group_cancel(chat_id, callback_query)
+
+    # Check bot calls
+    get_bot().answer_callback_query.assert_called_once()
+    get_bot().edit_message_text.assert_called_with(chat_id=chat_id, text=STRINGS['es']['removegroup_canceled'],
+                                                   message_id=111)

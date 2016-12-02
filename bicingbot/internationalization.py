@@ -56,8 +56,10 @@ STRINGS['es'] = {
                                        'para terminar'),
     'newgroup_number_groups_limit': 'Lo siento, ya tienes {} grupos y no puedes crear más',
     'removegroup_name': 'Elige el grupo que quieres eliminar',
+    'removegroup_cancel': 'Cancelar',
     'removegroup_not_found': 'Lo siento, no tienes ningún grupo con ese nombre',
-    'removegroup_removed': "Ya he eliminado el grupo /{}, con estas estaciones '{}'",
+    'removegroup_removed': "Ya he eliminado el grupo /{}, con estas estaciones: {}",
+    'removegroup_canceled': "Has cancelado, no elimino ningún grupo",
     'groups_empty': 'Aún no tienes grupos. Para crear uno, envíame /nuevogrupo.'
 }
 
@@ -96,8 +98,10 @@ STRINGS['en'] = {
     'newgroup_number_stations_limit': 'So sorry, a group only can contain {} stations. Send me /end to finish',
     'newgroup_number_groups_limit': 'So sorry, you already have {} groups and you cannot create any more',
     'removegroup_name': 'Choose the group you want to remove',
+    'removegroup_cancel': 'Cancel',
     'removegroup_not_found': 'So sorry, you have no group with that name',
-    'removegroup_removed': "I've already removed the group /{}, with these stations '{}'",
+    'removegroup_removed': "I've already removed the group /{}, with these stations: {}",
+    'removegroup_canceled': "You canceled, I don't remove any group",
     'groups_empty': 'You have no groups yet. To create one, send me /newgroup.'
 }
 
@@ -137,8 +141,10 @@ STRINGS['ca'] = {
     'newgroup_number_stations_limit': "Ho sento, només pot haver {} estacions dins d'un grup. Envia'm /fi per acabar",
     'newgroup_number_groups_limit': "Ho sento, ja tens {} grups i no pots crear més",
     'removegroup_name': 'Tria el grup que vols eliminar',
+    'removegroup_cancel': 'Cancel·lar',
     'removegroup_not_found': 'Ho sento, no tens cap grup amb aquest nom',
-    'removegroup_removed': "Ja he eliminat el grup /{}, amb aquestes estacions '{}'",
+    'removegroup_removed': "Ja he eliminat el grup /{}, amb aquestes estacions: {}",
+    'removegroup_canceled': "Has cancel·lat, no elimino cap grup",
     'groups_empty': "Encara no tens grups. Per crear-ne un de nou, envia'm /nougrup."
 }
 

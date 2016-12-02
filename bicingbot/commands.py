@@ -25,7 +25,7 @@ from telegram.emoji import Emoji
 from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.groups import get_group_status, newgroup_command, remove_group_command, groups_command, remove_group
-from bicingbot.groups import GROUP_STATUS_INIT, REMOVE_GROUP_CALLBACK
+from bicingbot.groups import GROUP_STATUS_INIT, REMOVE_GROUP_CALLBACK, REMOVE_CANCEL_CALLBACK, remove_group_cancel
 from bicingbot.internationalization import tr
 from bicingbot.language import language_command, update_language, LANGUAGE_CALLBACK
 from bicingbot.telegram_bot import get_bot
@@ -156,17 +156,19 @@ def prepare_stations_status_response(stations):
     return '\n'.join(messages)
 
 
-def bicingbot_callback_response(chat_id, callback_query_id, data):
+def bicingbot_callback(chat_id, data, callback_query):
     """
     Handles bicingbot callback query responses and sends the corresponding messages to the user
 
     :param chat_id: Telegram chat id
-    :param callback_query_id: unique callback query id
-    :param data: callback query response
+    :param data: callback query data
+    :param callback_query: callback query
     """
     logger.info('COMMAND callback {}: chat_id={}'.format(data, chat_id))
     command, text = data.split('_', 1)
     if command == REMOVE_GROUP_CALLBACK:
-        remove_group(chat_id, callback_query_id, text)
+        remove_group(chat_id, text, callback_query)
+    elif command == REMOVE_CANCEL_CALLBACK:
+        remove_group_cancel(chat_id, callback_query)
     elif command == LANGUAGE_CALLBACK:
-        update_language(chat_id, callback_query_id, text)
+        update_language(chat_id, text, callback_query)
