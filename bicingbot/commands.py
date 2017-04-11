@@ -24,8 +24,8 @@ from telegram.emoji import Emoji
 
 from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
-from bicingbot.groups import get_group_status, newgroup_command, remove_group_command, groups_command, remove_group
 from bicingbot.groups import GROUP_STATUS_INIT, REMOVE_GROUP_CALLBACK, REMOVE_CANCEL_CALLBACK, remove_group_cancel
+from bicingbot.groups import get_group_status, newgroup_command, remove_group_command, groups_command, remove_group
 from bicingbot.internationalization import tr
 from bicingbot.language import language_command, update_language, LANGUAGE_CALLBACK
 from bicingbot.telegram_bot import get_bot
@@ -135,13 +135,14 @@ def send_stations_status(chat_id, stations):
         except Exception:
             stations_status.append({'error': tr('wrong_station', chat_id).format(station_id)})
     if stations_status:
-        get_bot().send_message(chat_id=chat_id, text=prepare_stations_status_response(stations_status))
+        get_bot().send_message(chat_id=chat_id, text=prepare_stations_status_response(chat_id, stations_status))
 
 
-def prepare_stations_status_response(stations):
+def prepare_stations_status_response(chat_id, stations):
     """
     Beautifies stations status output to be rendered in Telegram
 
+    :param chat_id: Telegram chat id
     :param stations: list of stations read from Bicing API
     :return: a str with the complete message
     """
@@ -150,9 +151,12 @@ def prepare_stations_status_response(stations):
         if 'error' in station:
             messages.append(station['error'])
         else:
-            messages.append('{} - {} [{}] {} {}'.format(pad_number(station['bikes']), pad_number(station['slots']),
-                                                        station['id'], compact_address(station['streetName']),
-                                                        station['streetNumber']))
+            if station['status'] == 'OPN':
+                bikes = '{} - {}'.format(pad_number(station['bikes']), pad_number(station['slots']))
+            else:
+                bikes = tr('disabled_station', chat_id=chat_id)
+            messages.append('{} [{}] {} {}'.format(bikes, station['id'], compact_address(station['streetName']),
+                                                   station['streetNumber']))
     return '\n'.join(messages)
 
 
