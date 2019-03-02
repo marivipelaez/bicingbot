@@ -22,8 +22,8 @@ import logging
 
 import requests
 
-GET_STATIONS_URL = 'http://wservice.viabicing.cat/v2/stations'
-GET_STATION_URL = GET_STATIONS_URL + '/{}'
+GET_STATION_URL = 'https://www.bicing.barcelona/get-stations'
+POST_BODY = 'station%5B%5D=text&station%5B%5D={station_id}&station%5B%5D=station'
 
 logger = logging.getLogger(__name__)
 
@@ -46,23 +46,20 @@ class Bicing(object):
         :return: a dict with the status of the given station
         """
         try:
-            reponse_json = requests.get(GET_STATION_URL.format(station_id)).json()
+            response = requests.post(GET_STATION_URL, data=POST_BODY.format(station_id=station_id),
+                                     headers={'Content-type': 'application/x-www-form-urlencoded'})
+            stations = response.json()['stations']
         except Exception as ex:
-            logger.warning('Error requesting station {}: {}'.format(station_id, ex))
-            raise ex
+            error_message = 'Error requesting station {}: {}'.format(station_id, ex)
+            logger.warning(error_message)
+            raise Exception(error_message)
 
-        try:
-            station = reponse_json['stations'][0]
-        except KeyError:
-            error = reponse_json['error']
-            if error == 'not found':
-                error_message = 'Station {} not found'.format(station_id)
-                logger.warning(error_message)
-                raise StationNotFoundError(error_message)
-            else:
-                error_message = 'Station {} can not be read due to {}'.format(station_id, error)
-                logger.warning(error_message)
-                raise Exception(error_message)
+        if len(stations) == 0:
+            error_message = 'Station {} not found'.format(station_id)
+            logger.warning(error_message)
+            raise StationNotFoundError(error_message)
+
+        station = stations[0]
         logger.debug('status[{}] = {}'.format(station_id, station))
 
         return station

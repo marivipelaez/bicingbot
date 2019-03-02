@@ -37,15 +37,14 @@ def normalize_command_name(text):
 
 def pad_number(num):
     """
-    If given number has only one digit, a new string with two spaces in the left is returned. Otherwise, the same
-     string is returned.
+    If given number has only one digit, a new string with two spaces in the left is returned. Otherwise, a string
+     without spaces is returned.
 
-    :param num: string with an integer
+    :param num: integer
     :return: padded string
     """
-    if int(num) < 10:
-        return '  ' + num
-    return num
+    pad = '  ' if num < 10 else ''
+    return '%s%s' % (pad, num)
 
 
 def compact_address(address):
@@ -55,11 +54,26 @@ def compact_address(address):
     :param address: street name
     :return: compacted street name
     """
-    max_length = 14
-    stop_words = ['Carrer ', 'de ', 'del ']
+    # Remove unneeded words
+    stop_words = ['CARRER ', 'DE ', 'DEL ', 'C/ ', 'C/']
     for word in stop_words:
         address = address.replace(word, '')
-    return address[:max_length]
+    # Remove station id
+    split_address = address.split(' - ')
+    address = split_address[1] if len(split_address) > 1 else address
+    # Remove additional address
+    split_address = address.split('/')
+    address = split_address[0]
+    # Remove additional address
+    split_address = address.split('(')
+    address = split_address[0]
+    # Limit address length
+    max_length = 14
+    split_address = address.split(',', 1)
+    address = split_address[0][:max_length].strip()
+    if len(split_address) > 1:
+        address = '%s, %s' % (address, split_address[1].strip())
+    return address
 
 
 def is_integer(text):

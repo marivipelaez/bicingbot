@@ -151,12 +151,11 @@ def prepare_stations_status_response(chat_id, stations):
         if 'error' in station:
             messages.append(station['error'])
         else:
-            if station['status'] == 'OPN':
+            if station['status'] == 1:
                 bikes = '{} - {}'.format(pad_number(station['bikes']), pad_number(station['slots']))
             else:
                 bikes = tr('disabled_station', chat_id=chat_id)
-            messages.append('{} [{}] {} {}'.format(bikes, station['id'], compact_address(station['streetName']),
-                                                   station['streetNumber']))
+            messages.append('{} [{}] {}'.format(bikes, station['id'], compact_address(station['streetName'])))
     return '\n'.join(messages)
 
 
