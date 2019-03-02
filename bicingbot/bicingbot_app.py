@@ -46,15 +46,19 @@ def webhook_handler():
     """
     # Reads request from Telegram user
     update = telegram.Update.de_json(request.get_json(force=True))
+    logger.debug("Received message '{}'".format(update.message))
     try:
-        chat_id = update.message.chat.id
-        text = update.message.text
-        logger.debug("Received message '{}' from chat_id={}".format(text, chat_id))
-        bicingbot_commands(chat_id, text)
+        if update.message.chat.type == 'private':
+            chat_id = update.message.chat.id
+            text = update.message.text
+            logger.info("Received message '{}' from chat_id={}".format(text, chat_id))
+            bicingbot_commands(chat_id, text)
+        else:
+            logger.warn("Received message with wrong chat type: {}".format(update.message))
     except AttributeError:
         chat_id = update.callback_query.message.chat.id
         data = update.callback_query.data
-        logger.debug("Received callback query response '{}' from chat_id={}".format(data, chat_id))
+        logger.info("Received callback query response '{}' from chat_id={}".format(data, chat_id))
         bicingbot_callback(chat_id, data, update.callback_query)
 
     return ''
