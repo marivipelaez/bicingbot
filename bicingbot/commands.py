@@ -19,6 +19,7 @@ limitations under the License.
 """
 
 import logging
+from multiprocessing import Process, Manager
 
 from telegram.emoji import Emoji
 
@@ -121,21 +122,42 @@ def bicingbot_commands(chat_id, text):
 
 def send_stations_status(chat_id, stations):
     """
-    Sends the status of the given stations to the user
+    Gets status of given stations in parallel and sends it to the user
 
     :param chat_id: Telegram chat id
     :param stations: list of stations identifiers
     """
-    stations_status = []
-    for station_id in stations:
-        try:
-            stations_status.append(Bicing().get_station(station_id))
-        except StationNotFoundError:
-            stations_status.append({'error': tr('station_not_found', chat_id).format(station_id)})
-        except Exception:
-            stations_status.append({'error': tr('wrong_station', chat_id).format(station_id)})
+    stations_status = Manager().dict()
+    processes = []
+    for station_index, station_id in enumerate(stations):
+        # Start a process per station and add it to processes list
+        process = Process(target=get_station_multiproc, args=(station_id, chat_id, stations_status, station_index))
+        process.start()
+        processes.append(process)
+    # Wait until all processes have stopped
+    for process in processes:
+        process.join()
     if stations_status:
+        # Get stations status sorted by index
+        stations_status = [stations_status[key] for key in sorted(stations_status.keys())]
         get_bot().send_message(chat_id=chat_id, text=prepare_stations_status_response(chat_id, stations_status))
+
+
+def get_station_multiproc(station_id, chat_id, stations_status, station_key):
+    """
+    Gets station status and returns it in stations_status variable
+
+    :param station_id: id of the station
+    :param chat_id: Telegram chat id
+    :param stations_status: output dict to put station status
+    :param station_key: output dict key
+    """
+    try:
+        stations_status[station_key] = Bicing().get_station(station_id)
+    except StationNotFoundError:
+        stations_status[station_key] = {'error': tr('station_not_found', chat_id).format(station_id)}
+    except Exception:
+        stations_status[station_key] = {'error': tr('wrong_station', chat_id).format(station_id)}
 
 
 def prepare_stations_status_response(chat_id, stations):
