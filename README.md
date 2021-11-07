@@ -6,12 +6,20 @@
 
 Telegram bot that shows the status of your favorite stations of [Bicing](https://www.bicing.cat/), the Barcelona's public bike rental system.
 
-## Installation
+## Main libraries used
 
+Bicingbot is built with [Python](https://www.python.org/) and used the following libraries:
+
+* [Flask](https://pypi.org/project/Flask/2.0.2/) as HTTP server to publish the `BicingBot API callbacks`.
+* [Sqlite3](https://docs.python.org/3/library/sqlite3.html) as database.
+* [Telegram python library](https://github.com/python-telegram-bot/python-telegram-bot) to connect to `Telegram`.
+* [Bicing API](https://www.bicing.barcelona/get-stations) to get Bicing Stations information
+## Installation
 ### Requirements
 
 * Install Python3: https://www.python.org/ (tested with python 3.9)
-### Project dependencies
+
+### Build and run
 
 * Create a new `virtualenv` called `bicingbot`:
 
@@ -42,23 +50,30 @@ $ source VIRTUALENVS_PATH/bicingbot/bin/activate
 $ workon bicingbot
 ```
 
-* Install python dependencies: `(bicingbot)$ pip install -r requirements.txt`
-* Install python dev dependencies: `(bicingbot)$ pip install -r requirements_dev.txt`
+* Install dependencies
 
-### Build and run
-
+```sh
+(bicingbot)$ pip install -r requirements.txt
+```
 
 * Run `bicingbot` server:
 
 ```sh
-$ python bicingbot/bicingbot_app.py
+(bicingbot)$ python bicingbot/bicingbot_app.py
 ```
 
-Now, open the browser pointing to http://localhost:5000
+Now, the bot is listening on http://localhost:5000
 
 ## Development
 
-* [Flask](https://pypi.org/project/Flask/2.0.2/) as HTTP server to publish the `BicingBot API callbacks`.
-* [Sqlite3](https://docs.python.org/3/library/sqlite3.html) as database.
-* [Telegram python library](https://github.com/python-telegram-bot/python-telegram-bot) to connect to `Telegram`.
-* [Bicing API](https://www.bicing.barcelona/get-stations) to get Bicing Stations information
+* Install development dependencies
+
+```sh
+(bicingbot)$ pip install -r requirements_dev.txt
+```
+
+* Execute unit tests:
+
+```sh
+(bicingbot)$ pytest
+```
