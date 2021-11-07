@@ -28,12 +28,13 @@ from sqlite3.dbapi2 import IntegrityError
 
 config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'tests', 'conf')
 
+
 @pytest.fixture()
 def database_connection():
     os.makedirs(config_path, exist_ok=True)
     try:
         os.remove(os.path.join(config_path, 'bicingbot_test.db'))
-    except OSError as error:
+    except OSError:
         pass
     DatabaseMigration(database='bicingbot_test.db', config_path=config_path).create_schema()
     conn = DatabaseConnection(database='bicingbot_test.db', config_path=config_path)

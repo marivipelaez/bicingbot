@@ -146,7 +146,7 @@ def is_valid_group_name(text):
     """
     from bicingbot.commands import COMMANDS
     commands_alias = [value for values in COMMANDS.values() for value in values['alias']]
-    return re.match("^[\w\d_-]{1,20}$", text) and not is_integer(text) and text not in commands_alias
+    return re.match(r'^[\w\d_-]{1,20}$', text) and not is_integer(text) and text not in commands_alias
 
 
 def remove_group_command(chat_id, text):

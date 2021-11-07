@@ -83,7 +83,7 @@ def is_integer(text):
     :param text: string to validate
     :return: True if the text is an integer, False otherwise
     """
-    return re.match("^[\d]+$", text)
+    return re.match(r'^[\d]+$', text)
 
 
 def grouper(iterable):

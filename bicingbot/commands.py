@@ -40,6 +40,7 @@ EMOJIS = {
     'electrical_bicycle': '\U0001F50B'
 }
 
+
 def start_command(chat_id, text):
     """
     Sends welcome message to the user
@@ -71,6 +72,7 @@ def settings_command(chat_id, text):
     """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
 
+
 COMMANDS = {
     'start': {'alias': ['start'], 'method': start_command},
     'help': {'alias': ['help', 'ayuda', 'ajuda'], 'method': help_command},
@@ -81,6 +83,7 @@ COMMANDS = {
     'groups': {'alias': ['groups', 'grupos', 'grups'], 'method': groups_command},
     'end': {'alias': ['end', 'fin', 'fi'], 'method': None}
 }
+
 
 def get_command_method(text):
     """
