@@ -1,5 +1,8 @@
 # BicingBot
 
+[![Build Status](https://github.com/marivipelaez/bicingbot/workflows/build/badge.svg?branch=master)](https://github.com/marivipelaez/bicingbot/workflows/build/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/marivipelaez/bicingbot/badge.svg?branch=master)](https://coveralls.io/github/marivipelaez/bicingbot?branch=master)
+
+
 Telegram bot that shows the status of your favorite stations of [Bicing](https://www.bicing.cat/), the Barcelona's public bike rental system.
 
 ## Installation

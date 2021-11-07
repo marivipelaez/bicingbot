@@ -9,3 +9,4 @@ local_*
 *.db
 .vscode
 .pytest_cache
+.coverage

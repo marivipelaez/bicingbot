@@ -27,7 +27,7 @@ jobs:
         flake8 . --count --max-complexity=15 --max-line-length=141 --show-source --statistics
     - name: Test with pytest and coverage
       run: |
-        coverage run --source=bicingbot -m pytest bicingbot/tests
+        coverage run --source=bicingbot -m pytest tests
     - name: Publish on coveralls.io
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
