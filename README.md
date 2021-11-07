@@ -8,12 +8,13 @@ Telegram bot that shows the status of your favorite stations of [Bicing](https:/
 
 ## Main libraries used
 
-Bicingbot is built with [Python](https://www.python.org/) and used the following libraries:
+Bicingbot is built with [Python](https://www.python.org/) and uses the following libraries:
 
 * [Flask](https://pypi.org/project/Flask/2.0.2/) as HTTP server to publish the `BicingBot API callbacks`.
 * [Sqlite3](https://docs.python.org/3/library/sqlite3.html) as database.
 * [Telegram python library](https://github.com/python-telegram-bot/python-telegram-bot) to connect to `Telegram`.
 * [Bicing API](https://www.bicing.barcelona/get-stations) to get Bicing Stations information
+
 ## Installation
 ### Requirements
 

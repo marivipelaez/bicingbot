@@ -47,7 +47,7 @@ class Bicing(object):
         """
         try:
             response = requests.post(GET_STATION_URL, data=POST_BODY.format(station_id=station_id),
-                                     headers={'Content-Type': 'application/json'})
+                                     headers={'Content-type': 'application/x-www-urlencoded'})
             stations = response.json()['stations']
         except Exception as ex:
             error_message = 'Error requesting station {}: {}'.format(station_id, ex)
