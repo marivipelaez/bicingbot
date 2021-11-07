@@ -9,18 +9,19 @@ Telegram bot that shows the status of your favorite stations of [Bicing](https:/
 * Install Python3: https://www.python.org/ (tested with python 3.9)
 ### Project dependencies
 
-* Create a new `virtualenv` called `bicingbot` and activate it.
+* Create a new `virtualenv` called `bicingbot`:
+
+```sh
+$ cd VIRTUALENVS_PATH
+$ python venv bicingbot
+```
 
 ```sh
 # If working with virtualenvwrapper
 $ mkvirtualenv bicingbot
 ```
 
-* Install python dependencies: `(bicingbot)$ pip install -r requirements.txt`
-* Install python dev dependencies: `(bicingbot)$ pip install -r requirements_dev.txt`
-
-### Build and run
-* Activate virtualenv
+* Activate the `virtualenv`
 
 ```sh
 # In Windows
@@ -37,6 +38,12 @@ $ source VIRTUALENVS_PATH/bicingbot/bin/activate
 $ workon bicingbot
 ```
 
+* Install python dependencies: `(bicingbot)$ pip install -r requirements.txt`
+* Install python dev dependencies: `(bicingbot)$ pip install -r requirements_dev.txt`
+
+### Build and run
+
+
 * Run `bicingbot` server:
 
 ```sh
@@ -47,7 +54,7 @@ Now, open the browser pointing to http://localhost:5000
 
 ## Development
 
-* [Flask](https://flask.palletsprojects.com/en/1.1.x/) as HTTP server to publish the `BicingBot API callbacks`.
+* [Flask](https://pypi.org/project/Flask/2.0.2/) as HTTP server to publish the `BicingBot API callbacks`.
 * [Sqlite3](https://docs.python.org/3/library/sqlite3.html) as database.
 * [Telegram python library](https://github.com/python-telegram-bot/python-telegram-bot) to connect to `Telegram`.
 * [Bicing API](https://www.bicing.barcelona/get-stations) to get Bicing Stations information
