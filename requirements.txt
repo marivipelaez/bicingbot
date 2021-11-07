@@ -1,6 +1,3 @@
-Flask==0.11
-python-telegram-bot
-requests
-pytest
-mock
-requests_mock
+Flask==2.0.2
+python-telegram-bot==4.3.4 # 13.7
+requests==2.13.0 # 2.26.0

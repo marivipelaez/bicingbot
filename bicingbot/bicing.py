@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-u"""
+"""
 Copyright 2016 Marivi Pelaez Alonso.
 
 This file is part of BicingBot.
@@ -47,7 +47,7 @@ class Bicing(object):
         """
         try:
             response = requests.post(GET_STATION_URL, data=POST_BODY.format(station_id=station_id),
-                                     headers={'Content-type': 'application/x-www-form-urlencoded'})
+                                     headers={'Content-type': 'application/x-www-urlencoded'})
             stations = response.json()['stations']
         except Exception as ex:
             error_message = 'Error requesting station {}: {}'.format(station_id, ex)

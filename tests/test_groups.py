@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-u"""
+"""
 Copyright 2016 Marivi Pelaez Alonso.
 
 This file is part of BicingBot.
@@ -292,7 +292,7 @@ def test_is_valid_group_name():
     assert not is_valid_group_name('casacasacasacasacasac')
     assert not is_valid_group_name('settings')
     assert not is_valid_group_name('fin')
-    assert not is_valid_group_name('casa\casa')
+    assert not is_valid_group_name('casa\\casa')
     assert not is_valid_group_name('casa*')
     assert not is_valid_group_name('casa.casa')
 

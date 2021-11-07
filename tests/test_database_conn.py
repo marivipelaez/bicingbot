@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-u"""
+"""
 Copyright 2016 Marivi Pelaez Alonso.
 
 This file is part of BicingBot.
@@ -26,20 +26,25 @@ from bicingbot.database_conn import DatabaseConnection
 from bicingbot.database_migration import DatabaseMigration
 from sqlite3.dbapi2 import IntegrityError
 
+config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'tests', 'conf')
 
-@pytest.yield_fixture()
+
+@pytest.fixture()
 def database_connection():
-    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'conf')
-    os.remove(os.path.join(config_path, 'bicingbot_test.db'))
-    DatabaseMigration(database='bicingbot_test.db').create_schema()
-    conn = DatabaseConnection(database='bicingbot_test.db')
+    os.makedirs(config_path, exist_ok=True)
+    try:
+        os.remove(os.path.join(config_path, 'bicingbot_test.db'))
+    except OSError:
+        pass
+    DatabaseMigration(database='bicingbot_test.db', config_path=config_path).create_schema()
+    conn = DatabaseConnection(database='bicingbot_test.db', config_path=config_path)
     yield conn
     conn.close()
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def check_connection():
-    conn = DatabaseConnection(database='bicingbot_test.db')
+    conn = DatabaseConnection(database='bicingbot_test.db', config_path=config_path)
     yield conn
     conn.close()
 

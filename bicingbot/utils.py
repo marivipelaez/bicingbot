@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-u"""
+"""
 Copyright 2016 Marivi Pelaez Alonso.
 
 This file is part of BicingBot.
@@ -83,7 +83,7 @@ def is_integer(text):
     :param text: string to validate
     :return: True if the text is an integer, False otherwise
     """
-    return re.match("^[\d]+$", text)
+    return re.match(r'^[\d]+$', text)
 
 
 def grouper(iterable):

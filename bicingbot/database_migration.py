@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-u"""
+"""
 Copyright 2016 Marivi Pelaez Alonso.
 
 This file is part of BicingBot.
@@ -26,8 +26,8 @@ class DatabaseMigration(object):
     Updates a database schema
     """
 
-    def __init__(self, database='bicingbot.db'):
-        self.connection = DatabaseConnection(database).connection
+    def __init__(self, database='bicingbot.db', config_path=None):
+        self.connection = DatabaseConnection(database, config_path).connection
 
     def create_schema(self):
         """
