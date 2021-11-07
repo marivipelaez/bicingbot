@@ -21,8 +21,6 @@ limitations under the License.
 import logging
 from multiprocessing import Process, Manager
 
-from telegram.emoji import Emoji
-
 from bicingbot.bicing import Bicing, StationNotFoundError
 from bicingbot.database_conn import DatabaseConnection
 from bicingbot.groups import GROUP_STATUS_INIT, REMOVE_GROUP_CALLBACK, REMOVE_CANCEL_CALLBACK, remove_group_cancel
@@ -34,6 +32,13 @@ from bicingbot.utils import pad_number, compact_address, normalize_command_name,
 
 logger = logging.getLogger(__name__)
 
+# From https://www.unicode.org/emoji/charts/full-emoji-list.html
+EMOJIS = {
+    'bicycle': '\U0001F6B2',
+    'no_entry_sign': '\U0001F6AB',
+    'no_bicycle': '\U0001F6B3',
+    'electrical_bicycle': '\U0001F50B'
+}
 
 def start_command(chat_id, text):
     """
@@ -66,7 +71,6 @@ def settings_command(chat_id, text):
     """
     logger.info('COMMAND {}: chat_id={}'.format(text, chat_id))
 
-
 COMMANDS = {
     'start': {'alias': ['start'], 'method': start_command},
     'help': {'alias': ['help', 'ayuda', 'ajuda'], 'method': help_command},
@@ -77,7 +81,6 @@ COMMANDS = {
     'groups': {'alias': ['groups', 'grupos', 'grups'], 'method': groups_command},
     'end': {'alias': ['end', 'fin', 'fi'], 'method': None}
 }
-
 
 def get_command_method(text):
     """
@@ -168,7 +171,7 @@ def prepare_stations_status_response(chat_id, stations):
     :param stations: list of stations read from Bicing API
     :return: a str with the complete message
     """
-    messages = [Emoji.BICYCLE + ' - ' + Emoji.NO_ENTRY_SIGN]
+    messages = [EMOJIS['bicycle'] + ' - ' + EMOJIS['no_bicycle']]
     for station in stations:
         if 'error' in station:
             messages.append(station['error'])

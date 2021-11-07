@@ -28,8 +28,9 @@ class DatabaseConnection(object):
     """
     connection = None
 
-    def __init__(self, database='bicingbot.db'):
-        config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'conf')
+    def __init__(self, database='bicingbot.db', config_path=None):
+        if not config_path:
+            config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'conf')
         self.connection = sqlite3.connect(os.path.join(config_path, database))
 
     def close(self):

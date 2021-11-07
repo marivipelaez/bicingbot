@@ -7,3 +7,5 @@ __pycache__
 conf/token
 local_*
 *.db
+.vscode
+.pytest_cache
